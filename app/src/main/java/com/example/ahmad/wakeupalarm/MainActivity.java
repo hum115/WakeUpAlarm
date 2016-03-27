@@ -17,11 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
@@ -30,7 +28,7 @@ import zephyr.android.HxMBT.ZephyrProtocol;
 
 import static android.view.View.OnClickListener;
 
-public class MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity {
     /** Called when the activity is first created. */
     BluetoothAdapter adapter = null;
     BTClient _bt;
@@ -38,8 +36,7 @@ public class MainActivity extends AppCompatActivity {
     NewConnectedListener _NConnListener;
     private final int HEART_RATE = 0x100;
     private final int INSTANT_SPEED = 0x101;
-    AlarmManager alarmaManager;
-    TimePicker alarmTimePicker;
+
     Context context;
 
     @Override
@@ -47,9 +44,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context =this;
-        //initialize the alarm Manager;
-        alarmaManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        Calendar calendar =Calendar.getInstance();
+
+
         /*Sending a message to android that we are going to initiate a pairing request*/
         IntentFilter filter = new IntentFilter("android.bluetooth.device.action.PAIRING_REQUEST");
         /*Registering a new BTBroadcast receiver from the Main Activity context with pairing request event*/
@@ -162,23 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        Button settime= (Button) findViewById(R.id.setalarm);
-        settime.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SetDate.class);
-                startActivity(intent);
-            }
-        });
-        Button setalarm=(Button)findViewById(R.id.PushAlarm);
-        setalarm.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-
-
-            }
-        });
 
     }
 
@@ -253,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
     public int gettimeforalarm(String alarm){
         return 5;
     }
+
     public void setAlarm(int TimeToAlarm){
         Long alarmtime = new GregorianCalendar().getTimeInMillis()+5*1000;
         Intent AlarmIntent = new Intent(this,AlarmRing.class);

@@ -21,14 +21,6 @@
 
         </activity>
         <activity
-            android:name=".SetTime"
-            android:parentActivityName=".MainActivity" >
-        </activity>
-        <activity
-            android:name=".SetDate"
-            android:parentActivityName=".MainActivity" >
-        </activity>
-        <activity
             android:name=".AlarmRing"
             android:parentActivityName=".MainActivity" >
         </activity>
