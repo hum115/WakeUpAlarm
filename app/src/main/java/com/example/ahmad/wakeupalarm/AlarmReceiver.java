@@ -11,9 +11,17 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+
         //create an intent to the ringntone service
-        Intent service_intent=new Intent(context,RingtonePlayingService.class);
-        context.startService(service_intent);
+        //Intent service_intent=new Intent(context,RingtonePlayingService.class);
+        //context.startService(service_intent);
+
+        //Go to Alarm Ring Activity
+
+        Intent AlarmRing = new Intent(context, com.example.ahmad.wakeupalarm.AlarmRing.class);
+        AlarmRing.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(AlarmRing);
 
     }
 }

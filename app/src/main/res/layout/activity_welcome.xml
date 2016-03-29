@@ -82,14 +82,5 @@
         android:id="@+id/HearRateLayout"
         android:layout_below="@+id/AlarmLayout">
 
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="HearRate"
-            android:id="@+id/switch1"
-            android:showText="true"
-
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true" />
     </RelativeLayout>
 </RelativeLayout>

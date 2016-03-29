@@ -21,6 +21,7 @@ public class RingtonePlayingService extends Service {
         return null;
     }
 
+
     @Override
     public int onStartCommand(Intent intent,int flags,int startId){
         Log.i("LocalService", "Received Start id" + startId + ":" + intent);
@@ -28,8 +29,11 @@ public class RingtonePlayingService extends Service {
         mediasong.start();
         return START_NOT_STICKY;
     }
+
     @Override
     public void onDestroy(){
-        Toast.makeText(this,"On Destroy Called",Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this,"You Have Woken Up",Toast.LENGTH_SHORT).show();
+        mediasong.stop();
     }
 }

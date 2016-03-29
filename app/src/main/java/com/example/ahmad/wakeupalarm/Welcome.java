@@ -8,17 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import zephyr.android.HxMBT.BTClient;
 import zephyr.android.HxMBT.ZephyrProtocol;
@@ -26,18 +23,18 @@ import zephyr.android.HxMBT.ZephyrProtocol;
 public class Welcome extends AppCompatActivity {
 
     // Initialization for the alarm Part
+
     AlarmManager alarmManager;
     NumberPicker alarm_Hour;
     NumberPicker alarm_Min;
     TextView update_text;
-    SwipeRefreshLayout swithHR;
     Context context;
     PendingIntent pendingIntent;
     // Initialization for the Heart Rate part
     BluetoothAdapter adapter = null;
     BTClient _bt;
     ZephyrProtocol _protocol;
-    NewConnectedListener _NConnListener;
+   // NewConnectedListener _NConnListener;
     private final int HEART_RATE = 0x100;
     private final int INSTANT_SPEED = 0x101;
     @Override
@@ -54,11 +51,11 @@ public class Welcome extends AppCompatActivity {
         update_text = (TextView)findViewById(R.id.alarmText);
         alarm_Hour.setMaxValue(24);
         alarm_Hour.setMinValue(0);
-        alarm_Hour.setValue(GregorianCalendar.HOUR);
+        alarm_Hour.setValue(Calendar.HOUR_OF_DAY);
         alarm_Hour.setWrapSelectorWheel(true);
         alarm_Min.setMinValue(0);
         alarm_Min.setMaxValue(59);
-        alarm_Min.setValue(GregorianCalendar.MINUTE);
+        alarm_Min.setValue(Calendar.MINUTE);
         alarm_Min.setWrapSelectorWheel(true);
 
 
@@ -73,10 +70,18 @@ public class Welcome extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //setting Calendar to the TimePicker
-                calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
-                calendar.set(Calendar.MINUTE, alarm_Min.getValue());
+
+                // For debugging purposes Make this run asap
+               // calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
+                //calendar.set(Calendar.MINUTE, alarm_Min.getValue());
+
                 Calendar TimeNow;
+
                 TimeNow = Calendar.getInstance();
+
+                // this is the one to delete
+                calendar.setTimeInMillis(TimeNow.getTimeInMillis()+2000);
+
                 String pmOram;
 
                 if (TimeNow.getTimeInMillis()<=calendar.getTimeInMillis()) {
@@ -133,7 +138,7 @@ public class Welcome extends AppCompatActivity {
 
 
         // The swith used to connect or not
-        Switch Connect = (Switch)findViewById(R.id.switch1);
+       // Switch Connect = (Switch)findViewById(R.id.switch1);
 
     }
 
