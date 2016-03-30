@@ -32,9 +32,13 @@
             </intent-filter>
         </activity>
         <receiver android:name=".AlarmReceiver"/>
+        <receiver android:name=".ConnectionReceiver"/>
+        <receiver android:name=".AlarmRing"/>
         <service android:name="RingtonePlayingService"
             android:enabled="true"/>
 
     </application>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
 </manifest>

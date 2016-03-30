@@ -4,8 +4,10 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,13 +25,15 @@ import zephyr.android.HxMBT.ZephyrProtocol;
 public class Welcome extends AppCompatActivity {
 
     // Initialization for the alarm Part
-
+    final Calendar calendar = Calendar.getInstance();
+    final Calendar connectionTime = Calendar.getInstance();
     AlarmManager alarmManager;
     NumberPicker alarm_Hour;
     NumberPicker alarm_Min;
     TextView update_text;
     Context context;
     PendingIntent pendingIntent;
+    PendingIntent pendingConnectionIntent;
     // Initialization for the Heart Rate part
     BluetoothAdapter adapter = null;
     BTClient _bt;
@@ -58,12 +62,18 @@ public class Welcome extends AppCompatActivity {
         alarm_Min.setValue(Calendar.MINUTE);
         alarm_Min.setWrapSelectorWheel(true);
 
+        PackageManager pm  = Welcome.this.getPackageManager();
+        ComponentName componentName = new ComponentName(Welcome.this, ConnectionReceiver.class);
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
 
 
         // Take The value From the calendar
 
-        final Calendar calendar = Calendar.getInstance();
+
         final Intent my_intent = new Intent(this.context,AlarmReceiver.class);
+        final Intent connectionIntent = new Intent (this.context,ConnectionReceiver.class);
+
         Button start_alarm=(Button)findViewById(R.id.start_alarm);
         start_alarm.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
@@ -72,17 +82,19 @@ public class Welcome extends AppCompatActivity {
                 //setting Calendar to the TimePicker
 
                 // For debugging purposes Make this run asap
-               // calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
-                //calendar.set(Calendar.MINUTE, alarm_Min.getValue());
+                calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
+                calendar.set(Calendar.MINUTE, alarm_Min.getValue());
 
                 Calendar TimeNow;
 
                 TimeNow = Calendar.getInstance();
 
                 // this is the one to delete
-                calendar.setTimeInMillis(TimeNow.getTimeInMillis()+2000);
-
+                //calendar.setTimeInMillis(TimeNow.getTimeInMillis()+2000);
+                //launch the connection 20 seconde before
+                //connectionTime.setTimeInMillis(calendar.getTimeInMillis()-5000);
                 String pmOram;
+              //  connectionIntent.putExtra("TimeToStop",calendar.getTimeInMillis());
 
                 if (TimeNow.getTimeInMillis()<=calendar.getTimeInMillis()) {
 
@@ -107,10 +119,14 @@ public class Welcome extends AppCompatActivity {
                     //Pending Intent Stuff
                     pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
                             , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                   // pendingConnectionIntent= PendingIntent.getBroadcast(Welcome.this,0,connectionIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
 
                     //set the alarm Manager
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                            pendingIntent);
+                  alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                           pendingIntent);
+                   // alarmManager.set(AlarmManager.RTC_WAKEUP,connectionTime.getTimeInMillis(),pendingConnectionIntent);
+
                 }
                 else
                 {

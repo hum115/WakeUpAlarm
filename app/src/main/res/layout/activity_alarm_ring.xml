@@ -25,4 +25,55 @@
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="119dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:id="@+id/BTstatus"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Initial HR"
+        android:id="@+id/HRinitial"
+        android:layout_below="@+id/stop_alarm"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="36dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="After Ring HR"
+        android:id="@+id/HRafterRing"
+        android:layout_below="@+id/HRinitial"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/AverageINI"
+        android:layout_above="@+id/HRafterRing"
+        android:layout_alignStart="@+id/BTstatus" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/AveragerNew"
+        android:layout_alignTop="@+id/HRafterRing"
+        android:layout_alignStart="@+id/AverageINI" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/HRValueStats"
+        android:layout_below="@+id/AverageINI"
+        android:layout_toEndOf="@+id/textView"
+        android:layout_marginStart="17dp" />
 </RelativeLayout>
