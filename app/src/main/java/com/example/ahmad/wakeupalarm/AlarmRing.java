@@ -25,6 +25,10 @@ import zephyr.android.HxMBT.ZephyrProtocol;
 
 public class AlarmRing extends AppCompatActivity {
 
+
+    boolean doesInitialHrExists;
+    Intent ToGetInitialHR;
+    int ValueComingFromWelcome;
     int counter=0;
     BTClient _bt;
     ZephyrProtocol _protocol;
@@ -51,6 +55,25 @@ public class AlarmRing extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        setContentView(R.layout.activity_alarm_ring);
+
+        //Check if there is an Initial HR
+
+        doesInitialHrExists=false;
+
+        ToGetInitialHR = getIntent();
+        doesInitialHrExists = ToGetInitialHR.getBooleanExtra("BoolSwitch",false);
+        if(doesInitialHrExists){
+        ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue",69);
+        }
+        else{
+            ValueComingFromWelcome = 0;
+        }
+
+
+
+
+
+
 
 /*Sending a message to android that we are going to initiate a pairing request*/
         IntentFilter filter = new IntentFilter("android.bluetooth.device.action.PAIRING_REQUEST");
@@ -95,6 +118,7 @@ public class AlarmRing extends AppCompatActivity {
             toast.show();
             statusBT_1.setText("Connected To Sensor");
             isconnected=true;
+
 
             //Reset all the values to 0s
 
@@ -190,19 +214,47 @@ public class AlarmRing extends AppCompatActivity {
                      if(checkConnection(statusBT_1,isconnected))
                     {
                         String HeartRatetext = msg.getData().getString("HeartRate");
+
                         //This is the Message Containing the Value of HR in int
+
                         int a = msg.getData().getInt("HeartRateValue");
                         System.out.println("Heart Rate Info is " + HeartRatetext + " and the one i am passing is " + a);
-                        fillupTheArrays(initialHR, afterRing, a,counter++);
-                        iniAvegrage.setText("" + initialHR.getAverage());
-                        newAverage.setText(""+afterRing.getAverage());
-                        if(isHRbigger(initialHR,afterRing) && isconnected==true)
-                        {
 
-                            TextView HRVALUESTATUS = (TextView)findViewById(R.id.HRValueStats);
-                            HRVALUESTATUS.setText("YOU ARE GOOD");
-                            CloseUp();
+                        //Create Logic if there is an initial HR
+
+                        //first step is if there is no initial Heart rate
+
+                        if(!doesInitialHrExists) {
+
+                            fillupTheArrays(initialHR, afterRing, a, counter++);
+                            iniAvegrage.setText("" + initialHR.getAverage());
+                            newAverage.setText("" + afterRing.getAverage());
+                            if (isHRbigger(initialHR, afterRing) && isconnected == true) {
+
+                                TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
+                                HRVALUESTATUS.setText("YOU ARE GOOD");
+                                CloseUp();
+                            }
                         }
+                        else //the logic to do if there is any initial value for a heart rate
+                        {
+                            if(ValueComingFromWelcome!=0) {
+                                iniAvegrage.setText("" + ValueComingFromWelcome);
+                                afterRing.addValue(a);
+                                newAverage.setText("" + afterRing.getAverage());
+                                if(ValueComingFromWelcome*1.15<=afterRing.getAverage()){
+                                    TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
+                                    HRVALUESTATUS.setText("YOU ARE GOOD");
+                                    CloseUp();
+                                }
+                                //Compare the Values
+                            }
+                            else{
+                                doesInitialHrExists=false;
+                            }
+
+                        }
+
                     }
                     }
 

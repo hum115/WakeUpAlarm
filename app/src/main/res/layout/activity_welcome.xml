@@ -82,5 +82,23 @@
         android:id="@+id/HearRateLayout"
         android:layout_below="@+id/AlarmLayout">
 
+        <EditText
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/ManualHR"
+            android:layout_alignTop="@+id/initialHeartRateSwitch"
+            android:layout_alignParentEnd="true" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Initial Heart Rate"
+            android:id="@+id/initialHeartRateSwitch"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:textOn="True"
+            android:checked="false" />
     </RelativeLayout>
 </RelativeLayout>

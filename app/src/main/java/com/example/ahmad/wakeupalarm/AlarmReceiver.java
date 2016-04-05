@@ -19,9 +19,14 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         //Go to Alarm Ring Activity
 
+
+        //Need to get the value coming from Bool and Int.
+
         Intent AlarmRing = new Intent(context, com.example.ahmad.wakeupalarm.AlarmRing.class);
         AlarmRing.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         context.startActivity(AlarmRing);
+
 
     }
 }

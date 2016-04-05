@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +35,10 @@ public class Welcome extends AppCompatActivity {
     NumberPicker alarm_Min;
     TextView update_text;
     Context context;
+    Switch initialHrSwitch;
+    Boolean switchBool;
     PendingIntent pendingIntent;
+    int initialHRValue;
     PendingIntent pendingConnectionIntent;
     // Initialization for the Heart Rate part
     BluetoothAdapter adapter = null;
@@ -44,10 +50,34 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        final EditText textInitialHR = (EditText)findViewById(R.id.ManualHR);
+
+        // Setting Up the Switch
+
+        initialHrSwitch = (Switch)findViewById(R.id.initialHeartRateSwitch);
+        switchBool = false;
+        initialHrSwitch.setChecked(switchBool);
+
+
+        initialHrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    switchBool = true;
+                    initialHRValue = textInitialHR.getInputType();
+                }
+                else{
+                    switchBool =false;
+
+                }
+            }
+        });
+
 
         //First Initialization
+
         this.context=this;
         alarm_Hour = (NumberPicker)findViewById(R.id.HourValue);
         alarm_Min= (NumberPicker)findViewById(R.id.minValue);
@@ -62,6 +92,8 @@ public class Welcome extends AppCompatActivity {
         alarm_Min.setValue(Calendar.MINUTE);
         alarm_Min.setWrapSelectorWheel(true);
 
+        //this is a code found online that would not disable the bluetooth
+
         PackageManager pm  = Welcome.this.getPackageManager();
         ComponentName componentName = new ComponentName(Welcome.this, ConnectionReceiver.class);
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
@@ -74,11 +106,26 @@ public class Welcome extends AppCompatActivity {
         final Intent my_intent = new Intent(this.context,AlarmReceiver.class);
         final Intent connectionIntent = new Intent (this.context,ConnectionReceiver.class);
 
+
+
+        // The Set alarm Click
+
         Button start_alarm=(Button)findViewById(R.id.start_alarm);
         start_alarm.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
+
+                //checking the switch
+
+                if (switchBool){
+                    my_intent.putExtra("BoolSwitch",switchBool);
+                    my_intent.putExtra("initialValue",initialHRValue);
+                }
+                else{
+                    my_intent.putExtra("InitialHR",switchBool);
+                }
+
                 //setting Calendar to the TimePicker
 
                 // For debugging purposes Make this run asap
