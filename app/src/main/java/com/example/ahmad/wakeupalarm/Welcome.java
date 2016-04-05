@@ -90,7 +90,7 @@ public class Welcome extends AppCompatActivity {
                 TimeNow = Calendar.getInstance();
 
                 // this is the one to delete
-                //calendar.setTimeInMillis(TimeNow.getTimeInMillis()+2000);
+                calendar.setTimeInMillis(TimeNow.getTimeInMillis()+2000);
                 //launch the connection 20 seconde before
                 //connectionTime.setTimeInMillis(calendar.getTimeInMillis()-5000);
                 String pmOram;

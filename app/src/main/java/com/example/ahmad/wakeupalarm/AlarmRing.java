@@ -25,7 +25,7 @@ import zephyr.android.HxMBT.ZephyrProtocol;
 
 public class AlarmRing extends AppCompatActivity {
 
-
+    int counter=0;
     BTClient _bt;
     ZephyrProtocol _protocol;
     NewConnectedListener _NConnListener;
@@ -37,6 +37,15 @@ public class AlarmRing extends AppCompatActivity {
     Boolean isconnected=false;
     HRarray initialHR = new HRarray(5);
     HRarray afterRing = new HRarray(5);
+    @Override
+    //This will make the
+    public void onBackPressed() {
+        //do nothing
+    }
+
+ //find a way to overide the onPause and onStop methods.
+
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,11 +193,12 @@ public class AlarmRing extends AppCompatActivity {
                         //This is the Message Containing the Value of HR in int
                         int a = msg.getData().getInt("HeartRateValue");
                         System.out.println("Heart Rate Info is " + HeartRatetext + " and the one i am passing is " + a);
-                        fillupTheArrays(initialHR, afterRing, a);
+                        fillupTheArrays(initialHR, afterRing, a,counter++);
                         iniAvegrage.setText("" + initialHR.getAverage());
                         newAverage.setText(""+afterRing.getAverage());
                         if(isHRbigger(initialHR,afterRing) && isconnected==true)
                         {
+
                             TextView HRVALUESTATUS = (TextView)findViewById(R.id.HRValueStats);
                             HRVALUESTATUS.setText("YOU ARE GOOD");
                             CloseUp();
@@ -241,9 +251,9 @@ public class AlarmRing extends AppCompatActivity {
 
 
     }
-    public void fillupTheArrays(HRarray i ,HRarray n,int a){
+    public void fillupTheArrays(HRarray i ,HRarray n,int a,int count){
         if(a<0){a=-a;}
-        if (i.getAverage()<=60){
+        if (count<15){
             i.addValue(a);
         }else{
             n.addValue(a);
@@ -251,7 +261,7 @@ public class AlarmRing extends AppCompatActivity {
     }
     public boolean isHRbigger(HRarray initial,HRarray NewHR){
         if(initial.getAverage()>40) {
-            return (initial.getAverage() <= NewHR.getAverage() * 1.55);
+            return (initial.getAverage()*1.05 <= NewHR.getAverage() );
         }
         return false;
     }
