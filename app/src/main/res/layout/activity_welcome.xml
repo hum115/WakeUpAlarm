@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.ahmad.wakeupalarm.Welcome">
+
+    tools:context="com.example.ahmad.wakeupalarm.Welcome"
+    android:background="@drawable/clocks">
+
 
     <RelativeLayout
+
         android:layout_width="match_parent"
-        android:layout_height="430dp"
+        android:layout_height="350dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/AlarmLayout">
@@ -20,58 +26,62 @@
             android:layout_height="wrap_content"
             android:text="Set alarm"
             android:id="@+id/start_alarm"
-            android:layout_above="@+id/alarmText"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="56dp" />
+            android:background="@drawable/roundshapebtn"
+            android:textColor="#ffffff"
+            android:layout_alignTop="@+id/stop_alarm"
+            android:layout_alignStart="@+id/HourValue" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Unset alarm"
             android:id="@+id/stop_alarm"
-            android:layout_alignTop="@+id/start_alarm"
-            android:layout_alignParentEnd="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Set the alarm clock!"
-            android:id="@+id/alarmText"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="46dp" />
+            android:background="@drawable/roundshapebtn"
+            android:textColor="#ffffff"
+            android:layout_below="@+id/minValue"
+            android:layout_toEndOf="@+id/start_alarm"
+            android:layout_marginStart="29dp"
+            android:layout_marginTop="34dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hour"
             android:id="@+id/textView4"
+            android:textColor="#ffffff"
             android:layout_alignParentTop="true"
-            android:layout_alignEnd="@+id/start_alarm" />
+            android:layout_alignStart="@+id/HourValue" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Min"
             android:id="@+id/textView8"
-            android:layout_alignBottom="@+id/textView4"
-            android:layout_alignStart="@+id/stop_alarm" />
+
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/minValue" />
 
         <NumberPicker
-            android:layout_width="wrap_content"
+
+
+        android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/HourValue"
-            android:layout_below="@+id/textView4"
-            android:layout_alignStart="@+id/textView4"
-            android:layout_marginTop="39dp" />
+
+
+            android:layout_marginStart="75dp"
+            android:layout_above="@+id/stop_alarm"
+            android:layout_alignParentStart="true"
+            android:foregroundTint="#fbf8f8" />
 
         <NumberPicker
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/minValue"
-            android:layout_alignTop="@+id/HourValue"
-            android:layout_alignStart="@+id/textView8" />
+            android:layout_below="@+id/textView8"
+            android:layout_alignStart="@+id/stop_alarm" />
+
 
     </RelativeLayout>
 
@@ -88,17 +98,31 @@
             android:inputType="numberSigned"
             android:ems="10"
             android:id="@+id/ManualHR"
-            android:layout_alignTop="@+id/initialHeartRateSwitch"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignBottom="@+id/initialHeartRateSwitch"
+            android:layout_toEndOf="@+id/alarmText" />
 
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Set Initial Heart Rate"
             android:id="@+id/initialHeartRateSwitch"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
             android:textOn="True"
-            android:checked="false" />
+            android:checked="false"
+            android:textColor="#ffffff"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Set the alarm clock!"
+            android:id="@+id/alarmText"
+            android:foregroundTint="#f8b7b7"
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="26dp" />
     </RelativeLayout>
+
 </RelativeLayout>

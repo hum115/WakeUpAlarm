@@ -3,7 +3,6 @@ package com.example.ahmad.wakeupalarm;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,14 +21,10 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-import zephyr.android.HxMBT.BTClient;
-import zephyr.android.HxMBT.ZephyrProtocol;
-
 public class Welcome extends AppCompatActivity {
 
     // Initialization for the alarm Part
     final Calendar calendar = Calendar.getInstance();
-    final Calendar connectionTime = Calendar.getInstance();
     AlarmManager alarmManager;
     NumberPicker alarm_Hour;
     NumberPicker alarm_Min;
@@ -39,37 +34,35 @@ public class Welcome extends AppCompatActivity {
     Boolean switchBool;
     PendingIntent pendingIntent;
     int initialHRValue;
-    PendingIntent pendingConnectionIntent;
-    // Initialization for the Heart Rate part
-    BluetoothAdapter adapter = null;
-    BTClient _bt;
-    ZephyrProtocol _protocol;
-   // NewConnectedListener _NConnListener;
-    private final int HEART_RATE = 0x100;
-    private final int INSTANT_SPEED = 0x101;
+    Bundle transmit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        final EditText textInitialHR = (EditText)findViewById(R.id.ManualHR);
+
+        // The Manual HR
+
+        final EditText textInitialHR = (EditText) findViewById(R.id.ManualHR);
+
 
         // Setting Up the Switch
 
-        initialHrSwitch = (Switch)findViewById(R.id.initialHeartRateSwitch);
+        initialHrSwitch = (Switch) findViewById(R.id.initialHeartRateSwitch);
         switchBool = false;
         initialHrSwitch.setChecked(switchBool);
 
+        // What to do when the Switch is clicked
 
         initialHrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     switchBool = true;
                     initialHRValue = textInitialHR.getInputType();
-                }
-                else{
-                    switchBool =false;
+                } else {
+                    switchBool = false;
 
                 }
             }
@@ -78,11 +71,11 @@ public class Welcome extends AppCompatActivity {
 
         //First Initialization
 
-        this.context=this;
-        alarm_Hour = (NumberPicker)findViewById(R.id.HourValue);
-        alarm_Min= (NumberPicker)findViewById(R.id.minValue);
-        alarmManager =(AlarmManager)getSystemService(ALARM_SERVICE);
-        update_text = (TextView)findViewById(R.id.alarmText);
+        this.context = this;
+        alarm_Hour = (NumberPicker) findViewById(R.id.HourValue);
+        alarm_Min = (NumberPicker) findViewById(R.id.minValue);
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        update_text = (TextView) findViewById(R.id.alarmText);
         alarm_Hour.setMaxValue(24);
         alarm_Hour.setMinValue(0);
         alarm_Hour.setValue(Calendar.HOUR_OF_DAY);
@@ -94,7 +87,7 @@ public class Welcome extends AppCompatActivity {
 
         //this is a code found online that would not disable the bluetooth
 
-        PackageManager pm  = Welcome.this.getPackageManager();
+        PackageManager pm = Welcome.this.getPackageManager();
         ComponentName componentName = new ComponentName(Welcome.this, ConnectionReceiver.class);
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
@@ -103,14 +96,13 @@ public class Welcome extends AppCompatActivity {
         // Take The value From the calendar
 
 
-        final Intent my_intent = new Intent(this.context,AlarmReceiver.class);
-        final Intent connectionIntent = new Intent (this.context,ConnectionReceiver.class);
-
+        final Intent my_intent = new Intent(this.context, AlarmReceiver.class);
+        final Intent connectionIntent = new Intent(this.context, ConnectionReceiver.class);
 
 
         // The Set alarm Click
 
-        Button start_alarm=(Button)findViewById(R.id.start_alarm);
+        Button start_alarm = (Button) findViewById(R.id.start_alarm);
         start_alarm.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
@@ -118,12 +110,12 @@ public class Welcome extends AppCompatActivity {
 
                 //checking the switch
 
-                if (switchBool){
-                    my_intent.putExtra("BoolSwitch",switchBool);
-                    my_intent.putExtra("initialValue",initialHRValue);
-                }
-                else{
-                    my_intent.putExtra("InitialHR",switchBool);
+                if (switchBool) {
+
+                    my_intent.putExtra("initialValue", initialHRValue);
+                    my_intent.putExtra("BoolSwitch", switchBool);
+                } else {
+                    my_intent.putExtra("InitialHR", switchBool);
                 }
 
                 //setting Calendar to the TimePicker
@@ -137,13 +129,15 @@ public class Welcome extends AppCompatActivity {
                 TimeNow = Calendar.getInstance();
 
                 // this is the one to delete
-                calendar.setTimeInMillis(TimeNow.getTimeInMillis()+2000);
+                calendar.setTimeInMillis(TimeNow.getTimeInMillis() + 2000);
                 //launch the connection 20 seconde before
-                //connectionTime.setTimeInMillis(calendar.getTimeInMillis()-5000);
-                String pmOram;
-              //  connectionIntent.putExtra("TimeToStop",calendar.getTimeInMillis());
 
-                if (TimeNow.getTimeInMillis()<=calendar.getTimeInMillis()) {
+                String pmOram;
+                // connectionIntent.putExtra("TimeToStop",calendar.getTimeInMillis());
+
+                //my_intent.putExtras(transmit);
+
+                if (TimeNow.getTimeInMillis() <= calendar.getTimeInMillis()) {
 
 
                     int hour = alarm_Hour.getValue();
@@ -166,17 +160,15 @@ public class Welcome extends AppCompatActivity {
                     //Pending Intent Stuff
                     pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
                             , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                   // pendingConnectionIntent= PendingIntent.getBroadcast(Welcome.this,0,connectionIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+                    // pendingConnectionIntent= PendingIntent.getBroadcast(Welcome.this,0,connectionIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
 
                     //set the alarm Manager
-                  alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                           pendingIntent);
-                   // alarmManager.set(AlarmManager.RTC_WAKEUP,connectionTime.getTimeInMillis(),pendingConnectionIntent);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                            pendingIntent);
+                    // alarmManager.set(AlarmManager.RTC_WAKEUP,connectionTime.getTimeInMillis(),pendingConnectionIntent);
 
-                }
-                else
-                {
+                } else {
                     Context context = getApplicationContext();
                     CharSequence text = "Chose a Time In the Future!";
                     int duration = Toast.LENGTH_SHORT;
@@ -186,7 +178,7 @@ public class Welcome extends AppCompatActivity {
 
             }
         });
-        Button alarm_off=(Button)findViewById(R.id.stop_alarm);
+        Button alarm_off = (Button) findViewById(R.id.stop_alarm);
         alarm_off.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,18 +187,18 @@ public class Welcome extends AppCompatActivity {
                 alarmManager.cancel(pendingIntent);
 
 
-
             }
         });
 
 
         // The swith used to connect or not
-       // Switch Connect = (Switch)findViewById(R.id.switch1);
+        // Switch Connect = (Switch)findViewById(R.id.switch1);
 
     }
 
 
     private void set_alarm_text(String output) {
+
         update_text.setText(output);
     }
 }

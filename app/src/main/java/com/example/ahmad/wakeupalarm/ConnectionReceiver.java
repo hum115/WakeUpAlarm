@@ -24,9 +24,9 @@ import zephyr.android.HxMBT.ZephyrProtocol;
 /**
  * Created by Ahmad on 3/30/2016.
  */
-public  class ConnectionReceiver extends BroadcastReceiver {
+public class ConnectionReceiver extends BroadcastReceiver {
 
-    Calendar AlramTime ;
+    Calendar AlramTime;
     BluetoothAdapter adapter = null;
     BTClient _bt;
     ZephyrProtocol _protocol;
@@ -35,7 +35,7 @@ public  class ConnectionReceiver extends BroadcastReceiver {
     private final int INSTANT_SPEED = 0x101;
     HRarray initialHR = new HRarray(5);
     HRarray afterRing = new HRarray(5);
-    Context context=this.context;
+    Context context = this.context;
 
     public void onReceive(Context context, Intent intent) {
 
@@ -74,7 +74,6 @@ public  class ConnectionReceiver extends BroadcastReceiver {
         _bt.addConnectedEventListener(_NConnListener);
 
 
-
         if (_bt.IsConnected()) {
             _bt.start();
             CharSequence text = "Connected to HxM " + DeviceName;
@@ -91,6 +90,7 @@ public  class ConnectionReceiver extends BroadcastReceiver {
             toast.show();
         }
     }
+
     private class BTBondReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -132,6 +132,7 @@ public  class ConnectionReceiver extends BroadcastReceiver {
             }
         }
     }
+
     final Handler Newhandler = new Handler() {
         public void handleMessage(Message msg) {
             TextView tv;
@@ -139,7 +140,7 @@ public  class ConnectionReceiver extends BroadcastReceiver {
                 case HEART_RATE:
                     String HeartRatetext = msg.getData().getString("HeartRate");
 
-                    int a=msg.getData().getInt("HeartRateValue");
+                    int a = msg.getData().getInt("HeartRateValue");
                     System.out.println("Heart Rate Info is " + HeartRatetext + " and the one i am passing is " + a);
                     //Create the Logical steps that will either enable or disable the Alarm
                     initialHR.addValue(a);

@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.ahmad.wakeupalarm.AlarmRing">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="WAKE UP !!"
-        android:id="@+id/textView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="134dp" />
+        android:layout_marginTop="134dp"
+        android:text="WAKE UP !!"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
+        android:id="@+id/stop_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="STOP ALARM"
-        android:id="@+id/stop_alarm"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="119dp" />
+        android:layout_marginTop="119dp"
+        android:text="STOP ALARM" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status"
         android:id="@+id/BTstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Status" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Initial HR"
         android:id="@+id/HRinitial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/stop_alarm"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="36dp" />
+        android:layout_marginTop="36dp"
+        android:text="Initial HR" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="After Ring HR"
         android:id="@+id/HRafterRing"
-        android:layout_below="@+id/HRinitial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+        android:layout_below="@+id/HRinitial"
+        android:layout_marginTop="20dp"
+        android:text="After Ring HR" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/AverageINI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/HRafterRing"
-        android:layout_alignStart="@+id/BTstatus" />
+        android:layout_alignStart="@+id/BTstatus"
+        android:text="New Text" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/AveragerNew"
-        android:layout_alignTop="@+id/HRafterRing"
-        android:layout_alignStart="@+id/AverageINI" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:layout_alignStart="@+id/AverageINI"
+        android:layout_alignTop="@+id/HRafterRing"
+        android:text="New Text" />
+
+    <TextView
         android:id="@+id/HRValueStats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/AverageINI"
+        android:layout_marginStart="17dp"
         android:layout_toEndOf="@+id/textView"
-        android:layout_marginStart="17dp" />
+        android:text="New Text" />
 </RelativeLayout>

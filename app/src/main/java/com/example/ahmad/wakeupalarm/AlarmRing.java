@@ -21,51 +21,61 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import zephyr.android.HxMBT.BTClient;
-import zephyr.android.HxMBT.ZephyrProtocol;
 
 public class AlarmRing extends AppCompatActivity {
 
+    // Values coming From the Welcome Page If Initial value of Heart Rate is set
 
     boolean doesInitialHrExists;
     Intent ToGetInitialHR;
     int ValueComingFromWelcome;
-    int counter=0;
+
+    // the counter is to count how many values are going into the Initial HR array if needed
+
+    int counter = 0;
+
+    // These variable are used to get connection and values from HeartRate
+
     BTClient _bt;
-    ZephyrProtocol _protocol;
     NewConnectedListener _NConnListener;
     private final int HEART_RATE = 0x100;
     private final int INSTANT_SPEED = 0x101;
     BluetoothAdapter adapter = null;
 
     //For Alarm
-    Boolean isconnected=false;
+    Boolean isconnected = false;
     HRarray initialHR = new HRarray(5);
     HRarray afterRing = new HRarray(5);
+
     @Override
-    //This will make the
+    //this method is overriden to disable the back press
     public void onBackPressed() {
         //do nothing
     }
 
- //find a way to overide the onPause and onStop methods.
+    //find a way to overide the onPause and onStop methods. (nothing so far ...)
 
 
     @Override
-
+    //this is the oncreate of the alarm ring activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       setContentView(R.layout.activity_alarm_ring);
+        setContentView(R.layout.activity_alarm_ring);
+
+        ToGetInitialHR = getIntent();
+        Bundle toTransmit;
+
+        toTransmit = ToGetInitialHR.getExtras();
 
         //Check if there is an Initial HR
 
-        doesInitialHrExists=false;
+        doesInitialHrExists = false;
 
-        ToGetInitialHR = getIntent();
-        doesInitialHrExists = ToGetInitialHR.getBooleanExtra("BoolSwitch",false);
-        if(doesInitialHrExists){
-        ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue",69);
-        }
-        else{
+
+        doesInitialHrExists = toTransmit.getBoolean("BoolSwitch", false);
+        if (doesInitialHrExists) {
+            ValueComingFromWelcome = toTransmit.getInt("initialValue", 69);
+        } else {
             ValueComingFromWelcome = 0;
         }
 
@@ -74,11 +84,10 @@ public class AlarmRing extends AppCompatActivity {
 
 
 
-
-/*Sending a message to android that we are going to initiate a pairing request*/
+        /*Sending a message to android that we are going to initiate a pairing request*/
         IntentFilter filter = new IntentFilter("android.bluetooth.device.action.PAIRING_REQUEST");
         /*Registering a new BTBroadcast receiver from the Main Activity context with pairing request event*/
-       this.getApplicationContext().registerReceiver(new BTBroadcastReceiver(), filter);
+        this.getApplicationContext().registerReceiver(new BTBroadcastReceiver(), filter);
         // Registering the BTBondReceiver in the application that the status of the receiver has changed to Paired
         IntentFilter filter2 = new IntentFilter("android.bluetooth.device.action.BOND_STATE_CHANGED");
         this.getApplicationContext().registerReceiver(new BTBondReceiver(), filter2);
@@ -100,14 +109,13 @@ public class AlarmRing extends AppCompatActivity {
 
 
         }
-        TextView statusBT_1 = (TextView)findViewById(R.id.BTstatus);
+        TextView statusBT_1 = (TextView) findViewById(R.id.BTstatus);
         //BhMacID = btDevice.getAddress();
         BluetoothDevice Device = adapter.getRemoteDevice(BhMacID);
         String DeviceName = Device.getName();
         _bt = new BTClient(adapter, BhMacID);
         _NConnListener = new NewConnectedListener(Newhandler, Newhandler);
         _bt.addConnectedEventListener(_NConnListener);
-
 
 
         if (_bt.IsConnected()) {
@@ -117,7 +125,7 @@ public class AlarmRing extends AppCompatActivity {
             Toast toast = Toast.makeText(this, text, duration);
             toast.show();
             statusBT_1.setText("Connected To Sensor");
-            isconnected=true;
+            isconnected = true;
 
 
             //Reset all the values to 0s
@@ -128,38 +136,47 @@ public class AlarmRing extends AppCompatActivity {
             Toast toast = Toast.makeText(this, text, duration);
             toast.show();
             statusBT_1.setText("Not Connected");
-            isconnected=false;
+            isconnected = false;
         }
 
-        TextView HRVALUESTATUS = (TextView)findViewById(R.id.HRValueStats);
+        final Button stopAlarm = (Button) findViewById(R.id.stop_alarm);
+
+        if (isconnected) {
+            stopAlarm.setClickable(false);
+        }
+
+        TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
         HRVALUESTATUS.setText("YOU NEED TO MOVE");
         //create an intent to the ringntone service
 
-        Intent service_intent=new Intent(AlarmRing.this,RingtonePlayingService.class);
+        //This is Rigntone Service Playing.
+
+        Intent service_intent = new Intent(AlarmRing.this, RingtonePlayingService.class);
         startService(service_intent);
 
+        // the stop button.
 
-        Button stopAlarm = (Button)findViewById(R.id.stop_alarm);
         stopAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isconnected==false ) {
+                if (isconnected == false) {
                     Intent stopIntent = new Intent(AlarmRing.this, RingtonePlayingService.class);
                     stopService(stopIntent);
 
 
                     Intent welcomeBack = new Intent(AlarmRing.this, Welcome.class);
                     startActivity(welcomeBack);
-                }
-                else{
+                } else {
+
 
                 }
             }
         });
 
 
-
     }
+
+    //This method gets the gets the extras from the BT receiver
     private class BTBondReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -168,6 +185,8 @@ public class AlarmRing extends AppCompatActivity {
             Log.d("Bond state", "BOND_STATED = " + device.getBondState());
         }
     }
+
+    //this method also is used for the BT connection
     private class BTBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -200,75 +219,76 @@ public class AlarmRing extends AppCompatActivity {
             }
         }
     }
+
     final Handler Newhandler = new Handler() {
         public void handleMessage(Message msg) {
-            TextView tv;
+
             switch (msg.what) {
                 case HEART_RATE:
-                    TextView statusBT_1 = (TextView)findViewById(R.id.BTstatus);
-                    TextView iniAvegrage = (TextView)findViewById(R.id.AverageINI);
-                    TextView newAverage = (TextView)findViewById(R.id.AveragerNew);
-                    if(isconnected==true)
-                    {
 
-                     if(checkConnection(statusBT_1,isconnected))
-                    {
-                        String HeartRatetext = msg.getData().getString("HeartRate");
+                    // declare the Textviews to be modified
 
-                        //This is the Message Containing the Value of HR in int
+                    TextView statusBT_1 = (TextView) findViewById(R.id.BTstatus);
+                    TextView iniAvegrage = (TextView) findViewById(R.id.AverageINI);
+                    TextView newAverage = (TextView) findViewById(R.id.AveragerNew);
 
-                        int a = msg.getData().getInt("HeartRateValue");
-                        System.out.println("Heart Rate Info is " + HeartRatetext + " and the one i am passing is " + a);
+                    if (isconnected == true) {
 
-                        //Create Logic if there is an initial HR
+                        if (checkConnection(statusBT_1, isconnected)) {
+                            String HeartRatetext = msg.getData().getString("HeartRate");
 
-                        //first step is if there is no initial Heart rate
+                            //This is the Message Containing the Value of HR in int
 
-                        if(!doesInitialHrExists) {
+                            int a = msg.getData().getInt("HeartRateValue");
+                            System.out.println("Heart Rate Info is " + HeartRatetext + " and the one i am passing is " + a);
 
-                            fillupTheArrays(initialHR, afterRing, a, counter++);
-                            iniAvegrage.setText("" + initialHR.getAverage());
-                            newAverage.setText("" + afterRing.getAverage());
-                            if (isHRbigger(initialHR, afterRing) && isconnected == true) {
+                            //Create Logic if there is an initial HR
 
-                                TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
-                                HRVALUESTATUS.setText("YOU ARE GOOD");
-                                CloseUp();
-                            }
-                        }
-                        else //the logic to do if there is any initial value for a heart rate
-                        {
-                            if(ValueComingFromWelcome!=0) {
-                                iniAvegrage.setText("" + ValueComingFromWelcome);
-                                afterRing.addValue(a);
+                            //first step is if there is no initial Heart rate
+
+                            if (!doesInitialHrExists) {
+
+                                fillupTheArrays(initialHR, afterRing, a, counter++);
+                                iniAvegrage.setText("" + initialHR.getAverage());
                                 newAverage.setText("" + afterRing.getAverage());
-                                if(ValueComingFromWelcome*1.15<=afterRing.getAverage()){
+                                if (isHRbigger(initialHR.getAverage(), afterRing.getAverage()) && isconnected == true) {
+
                                     TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
                                     HRVALUESTATUS.setText("YOU ARE GOOD");
                                     CloseUp();
                                 }
-                                //Compare the Values
-                            }
-                            else{
-                                doesInitialHrExists=false;
+                            } else //the logic to do if there is any initial value for a heart rate
+                            {
+                                if (ValueComingFromWelcome != 0) {
+                                    iniAvegrage.setText("" + ValueComingFromWelcome);
+                                    afterRing.addValue(a);
+                                    newAverage.setText("" + afterRing.getAverage());
+                                    if (isHRbigger(ValueComingFromWelcome, afterRing.getAverage())) {
+                                        TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
+                                        HRVALUESTATUS.setText("YOU ARE GOOD");
+                                        CloseUp();
+                                    }
+                                    //Compare the Values
+                                } else {
+                                    doesInitialHrExists = false;
+                                }
+
                             }
 
                         }
-
-                    }
-                    }
-
-                    else{
+                    } else {
                         isconnected = false;
-                        CharSequence text = "Connection Lost ... " ;
+                        CharSequence text = "Connection Lost ... ";
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(AlarmRing.this, text, duration);
                         toast.show();
-
                     }
                     break;
 
                 case INSTANT_SPEED:
+
+                    //we are not using this Speed.
+
                     String InstantSpeedtext = msg.getData().getString("InstantSpeed");
 
                     break;
@@ -277,24 +297,26 @@ public class AlarmRing extends AppCompatActivity {
         }
 
     };
-    public boolean checkConnection(TextView B,Boolean C){
-        if(_bt.IsConnected()){
+
+    public boolean checkConnection(TextView B, Boolean C) {
+        if (_bt.IsConnected()) {
 
             return true;
         }
         B.setText("Lost Connection");
         C = false;
-        CharSequence text = "Connection Lost ... " ;
+        CharSequence text = "Connection Lost ... ";
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(AlarmRing.this, text, duration);
         toast.show();
         return false;
 
     }
-    public void CloseUp(){
+
+    public void CloseUp() {
         Intent stopIntent = new Intent(AlarmRing.this, RingtonePlayingService.class);
         stopService(stopIntent);
-        if(_bt.IsConnected()) {
+        if (_bt.IsConnected()) {
             _bt.Close();
         }
 
@@ -303,17 +325,22 @@ public class AlarmRing extends AppCompatActivity {
 
 
     }
-    public void fillupTheArrays(HRarray i ,HRarray n,int a,int count){
-        if(a<0){a=-a;}
-        if (count<15){
+
+    public void fillupTheArrays(HRarray i, HRarray n, int a, int count) {
+        if (a < 0) {
+            a = -a;
+        }
+        if (count < 15) {
             i.addValue(a);
-        }else{
+        } else {
             n.addValue(a);
         }
     }
-    public boolean isHRbigger(HRarray initial,HRarray NewHR){
-        if(initial.getAverage()>40) {
-            return (initial.getAverage()*1.05 <= NewHR.getAverage() );
+
+    // Function to compare two values
+    public boolean isHRbigger(int initial, int NewHR) {
+        if (initial > 40) {
+            return (initial * 1.05 <= NewHR);
         }
         return false;
     }
