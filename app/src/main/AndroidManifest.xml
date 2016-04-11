@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ahmad.wakeupalarm">
+    package="com.example.ahmad.wakeupalarm" >
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -11,24 +11,25 @@
 
     <receiver android:name=".AlarmReceiver" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".AlarmRing"
-            android:label="-ALARM TIME-"></activity>
+            android:label="-ALARM TIME-" />
         <activity
             android:name=".Welcome"
-            android:label="Wake Up Alarm">
-
+            android:label="Wake Up Alarm" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
         </activity>
 
@@ -37,12 +38,19 @@
         <receiver android:name=".AlarmRing" />
 
         <service
-            android:name="RingtonePlayingService"
+            android:name=".RingtonePlayingService"
             android:enabled="true" />
 
-    </application>
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+        <activity
+            android:name=".info"
+            android:parentActivityName=".Welcome"
+            android:label="About This App">
+        </activity>
+        <activity android:name=".Settings"
+            android:parentActivityName=".Welcome"
+            android:label="Settings">
+        </activity>
+    </application>
 
 </manifest>

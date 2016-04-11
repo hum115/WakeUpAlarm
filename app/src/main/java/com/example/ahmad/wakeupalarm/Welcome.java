@@ -10,10 +10,11 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -28,24 +29,74 @@ public class Welcome extends AppCompatActivity {
     AlarmManager alarmManager;
     NumberPicker alarm_Hour;
     NumberPicker alarm_Min;
+    NumberPicker ManualInputedHR;
     TextView update_text;
     Context context;
     Switch initialHrSwitch;
     Boolean switchBool;
     PendingIntent pendingIntent;
     int initialHRValue;
-    Bundle transmit;
+    int numberOfInitialInput=0;
+
+    @Override
+    public void onResume(){
+        Intent getFromSettings = getIntent();
+        numberOfInitialInput = getFromSettings.getIntExtra("NOIHRV",15);
+        CharSequence text = "The passed value is : "+ numberOfInitialInput;
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+
+        super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.settings, menu);
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_settings:
+                Intent i = new Intent(this, Settings.class);
+                startActivity(i);
+                break;
+            case R.id.action_info:
+                Intent b =  new Intent(this,info.class);
+                b.putExtra("int",numberOfInitialInput);
+                startActivity(b);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(numberOfInitialInput==0){
+            numberOfInitialInput=15;
+        }
+
+
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        // The Manual HR
 
-        final EditText textInitialHR = (EditText) findViewById(R.id.ManualHR);
+
+        // The Manual HR
+        ManualInputedHR = (NumberPicker) findViewById(R.id.ManualHR);
+        ManualInputedHR.setMinValue(55);
+        ManualInputedHR.setMaxValue(120);
+        ManualInputedHR.setWrapSelectorWheel(true);
 
 
         // Setting Up the Switch
@@ -54,15 +105,20 @@ public class Welcome extends AppCompatActivity {
         switchBool = false;
         initialHrSwitch.setChecked(switchBool);
 
+        ManualInputedHR.setClickable(false);
         // What to do when the Switch is clicked
 
         initialHrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchBool = true;
-                    initialHRValue = textInitialHR.getInputType();
+                    initialHRValue = ManualInputedHR.getValue();
+                    ManualInputedHR.setClickable(true);
+
                 } else {
                     switchBool = false;
+
+                    ManualInputedHR.setClickable(false);
 
                 }
             }
@@ -95,7 +151,6 @@ public class Welcome extends AppCompatActivity {
 
         // Take The value From the calendar
 
-
         final Intent my_intent = new Intent(this.context, AlarmReceiver.class);
         final Intent connectionIntent = new Intent(this.context, ConnectionReceiver.class);
 
@@ -111,10 +166,11 @@ public class Welcome extends AppCompatActivity {
                 //checking the switch
 
                 if (switchBool) {
-
+                    initialHRValue = ManualInputedHR.getValue();
                     my_intent.putExtra("initialValue", initialHRValue);
                     my_intent.putExtra("BoolSwitch", switchBool);
                 } else {
+
                     my_intent.putExtra("InitialHR", switchBool);
                 }
 

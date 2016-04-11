@@ -62,26 +62,13 @@ public class AlarmRing extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_ring);
 
+        //First See if there is a fixed initial Heart Rate
+
         ToGetInitialHR = getIntent();
-        Bundle toTransmit;
+        ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue", 0);
+        doesInitialHrExists = ToGetInitialHR.getBooleanExtra("BoolSwitch", false);
 
-        toTransmit = ToGetInitialHR.getExtras();
-
-        //Check if there is an Initial HR
-
-        doesInitialHrExists = false;
-
-
-        doesInitialHrExists = toTransmit.getBoolean("BoolSwitch", false);
-        if (doesInitialHrExists) {
-            ValueComingFromWelcome = toTransmit.getInt("initialValue", 69);
-        } else {
-            ValueComingFromWelcome = 0;
-        }
-
-
-
-
+        //Connect To the HR sensor
 
 
         /*Sending a message to android that we are going to initiate a pairing request*/
@@ -109,6 +96,7 @@ public class AlarmRing extends AppCompatActivity {
 
 
         }
+
         TextView statusBT_1 = (TextView) findViewById(R.id.BTstatus);
         //BhMacID = btDevice.getAddress();
         BluetoothDevice Device = adapter.getRemoteDevice(BhMacID);
