@@ -33,6 +33,7 @@ public class AlarmRing extends AppCompatActivity {
     // the counter is to count how many values are going into the Initial HR array if needed
 
     int counter = 0;
+    int NumberOfinitialFilling = 0;
 
     // These variable are used to get connection and values from HeartRate
 
@@ -62,9 +63,14 @@ public class AlarmRing extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_ring);
 
+        if(NumberOfinitialFilling==0){
+            NumberOfinitialFilling = 15;
+        }
+
         //First See if there is a fixed initial Heart Rate
 
         ToGetInitialHR = getIntent();
+        NumberOfinitialFilling = ToGetInitialHR.getIntExtra("int",15);
         ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue", 0);
         doesInitialHrExists = ToGetInitialHR.getBooleanExtra("BoolSwitch", false);
 
@@ -115,6 +121,9 @@ public class AlarmRing extends AppCompatActivity {
             statusBT_1.setText("Connected To Sensor");
             isconnected = true;
 
+            TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
+            HRVALUESTATUS.setText("YOU NEED TO MOVE");
+
 
             //Reset all the values to 0s
 
@@ -125,6 +134,12 @@ public class AlarmRing extends AppCompatActivity {
             toast.show();
             statusBT_1.setText("Not Connected");
             isconnected = false;
+            TextView a =(TextView)findViewById(R.id.HRValueStats);
+            a.setText("");
+            a =(TextView)findViewById(R.id.HRinitial);
+            a.setText("");
+            a=(TextView)findViewById(R.id.HRafterRing);
+            a.setText("");
         }
 
         final Button stopAlarm = (Button) findViewById(R.id.stop_alarm);
@@ -133,8 +148,7 @@ public class AlarmRing extends AppCompatActivity {
             stopAlarm.setClickable(false);
         }
 
-        TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
-        HRVALUESTATUS.setText("YOU NEED TO MOVE");
+
         //create an intent to the ringntone service
 
         //This is Rigntone Service Playing.
@@ -236,8 +250,12 @@ public class AlarmRing extends AppCompatActivity {
 
                             if (!doesInitialHrExists) {
 
-                                fillupTheArrays(initialHR, afterRing, a, counter++);
-                                iniAvegrage.setText("" + initialHR.getAverage());
+                                fillupTheArrays(initialHR, afterRing, a, counter++,NumberOfinitialFilling);
+                                if(NumberOfinitialFilling-counter>0) {
+                                    iniAvegrage.setText("" + initialHR.getAverage() + "," + (NumberOfinitialFilling - counter) + " left");
+                                }else{
+                                    iniAvegrage.setText("" + initialHR.getAverage());
+                                }
                                 newAverage.setText("" + afterRing.getAverage());
                                 if (isHRbigger(initialHR.getAverage(), afterRing.getAverage()) && isconnected == true) {
 
@@ -314,11 +332,11 @@ public class AlarmRing extends AppCompatActivity {
 
     }
 
-    public void fillupTheArrays(HRarray i, HRarray n, int a, int count) {
+    public void fillupTheArrays(HRarray i, HRarray n, int a, int count,int numbIn) {
         if (a < 0) {
             a = -a;
         }
-        if (count < 15) {
+        if (count < numbIn) {
             i.addValue(a);
         } else {
             n.addValue(a);

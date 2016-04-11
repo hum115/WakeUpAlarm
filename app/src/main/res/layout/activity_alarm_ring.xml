@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.ahmad.wakeupalarm.AlarmRing">
+    tools:context="com.example.ahmad.wakeupalarm.AlarmRing"
+    android:background="@drawable/test">
 
     <TextView
         android:id="@+id/textView"
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:textColor="#ffffff"
         android:layout_marginTop="134dp"
         android:text="WAKE UP !!"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -24,6 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"
+        android:textColor="#ffffff"
+        android:background="@drawable/roundshapebtn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="119dp"
         android:text="STOP ALARM" />
@@ -33,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:textColor="#ffffff"
         android:layout_centerHorizontal="true"
         android:text="Status" />
 
@@ -41,41 +46,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:textColor="#ffffff"
         android:layout_below="@+id/stop_alarm"
         android:layout_marginTop="36dp"
-        android:text="Initial HR" />
+        android:text="Initial Heart Rate Average :" />
 
     <TextView
         android:id="@+id/HRafterRing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:textColor="#ffffff"
         android:layout_below="@+id/HRinitial"
         android:layout_marginTop="20dp"
-        android:text="After Ring HR" />
+        android:text="New Heart Rate Average :" />
 
     <TextView
         android:id="@+id/AverageINI"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/HRafterRing"
-        android:layout_alignStart="@+id/BTstatus"
-        android:text="New Text" />
+        android:textColor="#ffffff"
+        android:layout_marginStart="49dp"
+        android:layout_alignTop="@+id/HRinitial"
+        android:layout_toEndOf="@+id/textView" />
 
     <TextView
         android:id="@+id/AveragerNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#ffffff"
         android:layout_alignStart="@+id/AverageINI"
-        android:layout_alignTop="@+id/HRafterRing"
-        android:text="New Text" />
+        android:layout_alignTop="@+id/HRafterRing" />
 
     <TextView
         android:id="@+id/HRValueStats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/AverageINI"
-        android:layout_marginStart="17dp"
-        android:layout_toEndOf="@+id/textView"
-        android:text="New Text" />
+        android:textColor="#ffffff"
+        android:text="New Text"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp" />
 </RelativeLayout>

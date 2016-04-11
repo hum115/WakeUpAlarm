@@ -36,18 +36,20 @@ public class Welcome extends AppCompatActivity {
     Boolean switchBool;
     PendingIntent pendingIntent;
     int initialHRValue;
-    int numberOfInitialInput=0;
+    int numberOfInitialInput = 0;
+    boolean isDemoOn = false;
 
     @Override
-    public void onResume(){
+    //this method is overriden to disable the back press
+    public void onBackPressed() {
+        //do nothing
+    }
+
+    @Override
+    public void onResume() {
         Intent getFromSettings = getIntent();
-        numberOfInitialInput = getFromSettings.getIntExtra("NOIHRV",15);
-        CharSequence text = "The passed value is : "+ numberOfInitialInput;
-        int duration = Toast.LENGTH_LONG;
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-
-
+        isDemoOn = getFromSettings.getBooleanExtra("demo", false);
+        numberOfInitialInput = getFromSettings.getIntExtra("NOIHRV", 15);
         super.onResume();
     }
 
@@ -58,6 +60,7 @@ public class Welcome extends AppCompatActivity {
 
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -67,8 +70,9 @@ public class Welcome extends AppCompatActivity {
                 startActivity(i);
                 break;
             case R.id.action_info:
-                Intent b =  new Intent(this,info.class);
-                b.putExtra("int",numberOfInitialInput);
+
+                Intent b = new Intent(this, info.class);
+                b.putExtra("int", numberOfInitialInput);
                 startActivity(b);
 
         }
@@ -77,19 +81,15 @@ public class Welcome extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(numberOfInitialInput==0){
-            numberOfInitialInput=15;
+        if (numberOfInitialInput == 0) {
+            numberOfInitialInput = 15;
         }
-
-
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-
 
 
         // The Manual HR
@@ -132,7 +132,7 @@ public class Welcome extends AppCompatActivity {
         alarm_Min = (NumberPicker) findViewById(R.id.minValue);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         update_text = (TextView) findViewById(R.id.alarmText);
-        alarm_Hour.setMaxValue(24);
+        alarm_Hour.setMaxValue(23);
         alarm_Hour.setMinValue(0);
         alarm_Hour.setValue(Calendar.HOUR_OF_DAY);
         alarm_Hour.setWrapSelectorWheel(true);
@@ -170,29 +170,31 @@ public class Welcome extends AppCompatActivity {
                     my_intent.putExtra("initialValue", initialHRValue);
                     my_intent.putExtra("BoolSwitch", switchBool);
                 } else {
-
+                    my_intent.putExtra("int", numberOfInitialInput);
                     my_intent.putExtra("InitialHR", switchBool);
                 }
 
-                //setting Calendar to the TimePicker
+
 
                 // For debugging purposes Make this run asap
-                calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
-                calendar.set(Calendar.MINUTE, alarm_Min.getValue());
+
 
                 Calendar TimeNow;
 
                 TimeNow = Calendar.getInstance();
+                if (isDemoOn) {
+                    // this is the one to delete
+                    calendar.setTimeInMillis(TimeNow.getTimeInMillis() + 2000);
+                    //launch the connection 20 seconde before
+                } else {
+                    //Regular Settings
+                    calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
+                    calendar.set(Calendar.MINUTE, alarm_Min.getValue());
 
-                // this is the one to delete
-                calendar.setTimeInMillis(TimeNow.getTimeInMillis() + 2000);
-                //launch the connection 20 seconde before
-
-                String pmOram;
-                // connectionIntent.putExtra("TimeToStop",calendar.getTimeInMillis());
-
+                }
                 //my_intent.putExtras(transmit);
 
+                String pmOram;
                 if (TimeNow.getTimeInMillis() <= calendar.getTimeInMillis()) {
 
 
