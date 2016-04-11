@@ -257,6 +257,12 @@ public class Welcome extends AppCompatActivity {
 
     private void set_alarm_text(String output) {
 
-        update_text.setText(output);
+        if(isDemoOn){
+            update_text.setText("Demo is On, Launch in 2 Sec");
+
+        }else {
+
+            update_text.setText(output);
+        }
     }
 }
