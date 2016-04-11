@@ -33,7 +33,7 @@ public class Welcome extends AppCompatActivity {
     TextView update_text;
     Context context;
     Switch initialHrSwitch;
-    Boolean switchBool;
+    Boolean switchBool=false;
     PendingIntent pendingIntent;
     int initialHRValue;
     int numberOfInitialInput = 0;
@@ -50,6 +50,8 @@ public class Welcome extends AppCompatActivity {
         Intent getFromSettings = getIntent();
         isDemoOn = getFromSettings.getBooleanExtra("demo", false);
         numberOfInitialInput = getFromSettings.getIntExtra("NOIHRV", 15);
+        switchBool = getFromSettings.getBooleanExtra("HRstuff", false);
+        ManualInputedHR.setValue(getFromSettings.getIntExtra("intOFHR",55));
         super.onResume();
     }
 
@@ -67,12 +69,15 @@ public class Welcome extends AppCompatActivity {
 
             case R.id.action_settings:
                 Intent i = new Intent(this, Settings.class);
+                i.putExtra("intOfHR",ManualInputedHR.getValue());
+                i.putExtra("HRstuff",switchBool);
+                i.putExtra("demo",isDemoOn);
+                i.putExtra("int",numberOfInitialInput);
                 startActivity(i);
                 break;
             case R.id.action_info:
 
                 Intent b = new Intent(this, info.class);
-                b.putExtra("int", numberOfInitialInput);
                 startActivity(b);
 
         }
@@ -102,7 +107,6 @@ public class Welcome extends AppCompatActivity {
         // Setting Up the Switch
 
         initialHrSwitch = (Switch) findViewById(R.id.initialHeartRateSwitch);
-        switchBool = false;
         initialHrSwitch.setChecked(switchBool);
 
         ManualInputedHR.setClickable(false);

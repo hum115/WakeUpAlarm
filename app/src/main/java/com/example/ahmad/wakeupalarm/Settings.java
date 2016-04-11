@@ -13,11 +13,23 @@ public class Settings extends AppCompatActivity {
     int numberOfInitialHRinput;
     boolean isDemoOn = false;
 
+    @Override
+    public void onResume() {
+        Intent getFromSettings = getIntent();
+        isDemoOn = getFromSettings.getBooleanExtra("demo", false);
+        numberOfInitialHRinput = getFromSettings.getIntExtra("int", 15);
+        super.onResume();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        //Getting From Old Welcome
+        final Intent getFromSettings = getIntent();
+        isDemoOn = getFromSettings.getBooleanExtra("demo", false);
+        numberOfInitialHRinput = getFromSettings.getIntExtra("int", 15);
+
         NumberPicker numberPicker = (NumberPicker) findViewById(R.id.ValueOfInputs);
         numberPicker.setMaxValue(40);
         numberPicker.setMinValue(15);
@@ -49,8 +61,10 @@ public class Settings extends AppCompatActivity {
                 numberOfInitialHRinput = numberPicker.getValue();
 
                 Intent sentBack = new Intent(Settings.this, Welcome.class);
-                sentBack.putExtra("demo",isDemoOn);
+                sentBack.putExtra("demo", isDemoOn);
                 sentBack.putExtra("NOIHRV", numberOfInitialHRinput);
+                sentBack.putExtra("intOFHR", getFromSettings.getIntExtra("intOFHR", 55));
+                sentBack.putExtra("HRstuff",getFromSettings.getBooleanExtra("HRstuff",false));
                 startActivity(sentBack);
 
             }
