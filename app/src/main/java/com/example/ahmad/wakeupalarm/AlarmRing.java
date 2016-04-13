@@ -75,8 +75,9 @@ public class AlarmRing extends AppCompatActivity {
 
         ToGetInitialHR = getIntent();
         NumberOfinitialFilling = ToGetInitialHR.getIntExtra("int", 15);
-        ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue", 0);
-        doesInitialHrExists = ToGetInitialHR.getBooleanExtra("BoolSwitch", false);
+        ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue", 75);
+        doesInitialHrExists = ToGetInitialHR.getBooleanExtra("bls", false);
+        System.out.println("CHECK THIS" + doesInitialHrExists);
 
         //Connect To the HR sensor
 
@@ -253,9 +254,8 @@ public class AlarmRing extends AppCompatActivity {
 
                             //first step is if there is no initial Heart rate
 
-                            if (!doesInitialHrExists) {
-                                checkConnection(statusBT_1, isconnected);
-
+                            if (doesInitialHrExists == false) {
+                                System.out.println("CHECK THIS" + doesInitialHrExists);
                                 fillupTheArrays(initialHR, afterRing, a, counter++, NumberOfinitialFilling);
                                 if (NumberOfinitialFilling - counter > 0) {
                                     iniAvegrage.setText("" + initialHR.getAverage() + "," + (NumberOfinitialFilling - counter) + " left");
@@ -271,8 +271,7 @@ public class AlarmRing extends AppCompatActivity {
                                 }
                             } else //the logic to do if there is any initial value for a heart rate
                             {
-                                if (ValueComingFromWelcome != 0) {
-                                    checkConnection(statusBT_1, isconnected);
+                                if (ValueComingFromWelcome >= 0) {
                                     iniAvegrage.setText("" + ValueComingFromWelcome);
                                     afterRing.addValue(a);
                                     newAverage.setText("" + afterRing.getAverage());
@@ -283,7 +282,7 @@ public class AlarmRing extends AppCompatActivity {
                                     }
                                     //Compare the Values
                                 } else {
-                                    doesInitialHrExists = false;
+
                                 }
 
                             }
@@ -312,7 +311,7 @@ public class AlarmRing extends AppCompatActivity {
     };
 
     public boolean checkConnection(TextView B, Boolean C) {
-        if (!_bt.IsConnected()){
+        if (!_bt.IsConnected()) {
 
             B.setText("Lost Connection");
             isconnected = false;

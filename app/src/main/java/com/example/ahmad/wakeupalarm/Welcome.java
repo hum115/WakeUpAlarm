@@ -49,11 +49,10 @@ public class Welcome extends AppCompatActivity {
     public void onResume() {
         Intent getFromSettings = getIntent();
         isDemoOn = getFromSettings.getBooleanExtra("demo", false);
-        numberOfInitialInput = getFromSettings.getIntExtra("NOIHRV", 15);
-        switchBool = getFromSettings.getBooleanExtra("HRstuff", false);
+        numberOfInitialInput = getFromSettings.getIntExtra("cba", 15);
         alarmDate.set(getFromSettings.getIntExtra("year", 0), getFromSettings.getIntExtra("month", 0), getFromSettings.getIntExtra("day", 0));
-        switchBool = getFromSettings.getBooleanExtra("boolswitch", false);
-        initialHRValue = getFromSettings.getIntExtra("intOFHR", 75);
+        switchBool = getFromSettings.getBooleanExtra("bls", false);
+        initialHRValue = getFromSettings.getIntExtra("abc", 75);
 
         super.onResume();
     }
@@ -184,10 +183,10 @@ public class Welcome extends AppCompatActivity {
 
                 if (switchBool) {
                     my_intent.putExtra("initialValue", initialHRValue);
-                    my_intent.putExtra("BoolSwitch", switchBool);
+                    my_intent.putExtra("bls", switchBool);
                 } else {
                     my_intent.putExtra("int", numberOfInitialInput);
-                    my_intent.putExtra("BoolSwith", switchBool);
+                    my_intent.putExtra("bls", switchBool);
                 }
 
 
@@ -334,6 +333,11 @@ public class Welcome extends AppCompatActivity {
 
 
                                     } else if (TimeNow.get(Calendar.MINUTE) < calendar.get(Calendar.MINUTE)) {
+                                        if (!defaultDate) {
+                                            calendar.set(Calendar.YEAR, TimeNow.get(Calendar.YEAR));
+                                            calendar.set(Calendar.MONTH, TimeNow.get(Calendar.MONTH));
+                                            calendar.set(Calendar.DAY_OF_MONTH, TimeNow.get(Calendar.DAY_OF_MONTH));
+                                        }
                                         System.out.println("Min is bigger");
                                         int hour = alarm_Hour.getValue();
                                         int min = alarm_Min.getValue();

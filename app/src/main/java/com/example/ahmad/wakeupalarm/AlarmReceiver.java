@@ -30,7 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         AlarmRing.putExtra("initialValue", intent.getIntExtra("initialValue", 0));
         AlarmRing.putExtra("int",intent.getIntExtra("int",15));
-        AlarmRing.putExtra("BoolSwitch", intent.getBooleanExtra("BoolSwitch", false));
+        AlarmRing.putExtra("bls", intent.getBooleanExtra("bls", false));
         AlarmRing.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         context.startActivity(AlarmRing);

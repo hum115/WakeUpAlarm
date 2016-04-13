@@ -43,7 +43,7 @@ public class Settings extends AppCompatActivity {
         isDemoOn = getFromSettings.getBooleanExtra("demo", false);
 
         numberOfInitialHRinput = getFromSettings.getIntExtra("int", 15);
-        boolSwitch = getFromSettings.getBooleanExtra("boolswitch", false);
+        boolSwitch = getFromSettings.getBooleanExtra("bls", false);
 
         CheckStatus(boolSwitch);
 
@@ -74,11 +74,13 @@ public class Settings extends AppCompatActivity {
                     statics.setChecked(false);
                     numberPicker.setMaxValue(40);
                     numberPicker.setMinValue(15);
+                    boolSwitch = false;
 
                 } else {
                     statics.setChecked(true);
                     numberPicker.setMaxValue(120);
                     numberPicker.setMinValue(55);
+                    boolSwitch=true;
                 }
             }
         });
@@ -88,11 +90,13 @@ public class Settings extends AppCompatActivity {
                     dynamic.setChecked(false);
                     numberPicker.setMaxValue(120);
                     numberPicker.setMinValue(55);
+                    boolSwitch = true;
 
                 } else {
                     dynamic.setChecked(true);
                     numberPicker.setMaxValue(40);
                     numberPicker.setMinValue(15);
+                    boolSwitch=false;
                 }
             }
         });
@@ -105,15 +109,15 @@ public class Settings extends AppCompatActivity {
                 NumberPicker numberPicker = (NumberPicker) findViewById(R.id.ValueOfInputs);
                 Intent sentBack = new Intent(Settings.this, Welcome.class);
                 sentBack.putExtra("demo", isDemoOn);
-                sentBack.putExtra("boolswith", boolSwitch);
+                sentBack.putExtra("bls", boolSwitch);
 
                 if (boolSwitch) {
                     initalHRValue = numberPicker.getValue();
-                    sentBack.putExtra("intOFHR", initalHRValue);
+                    sentBack.putExtra("abc", initalHRValue);
 
                 } else {
                     numberOfInitialHRinput = numberPicker.getValue();
-                    sentBack.putExtra("NOIHRV", numberOfInitialHRinput);
+                    sentBack.putExtra("cba", numberOfInitialHRinput);
                 }
 
                 startActivity(sentBack);
