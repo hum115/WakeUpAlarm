@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import java.util.Calendar;
 
 public class Welcome extends AppCompatActivity {
 
+
     // Initialization for the alarm Part
     final Calendar calendar = Calendar.getInstance();
     AlarmManager alarmManager;
@@ -31,13 +33,16 @@ public class Welcome extends AppCompatActivity {
     NumberPicker alarm_Min;
     NumberPicker ManualInputedHR;
     TextView update_text;
+    TextView dateToShow;
     Context context;
     Switch initialHrSwitch;
-    Boolean switchBool=false;
+    Boolean switchBool = false;
     PendingIntent pendingIntent;
     int initialHRValue;
     int numberOfInitialInput = 0;
     boolean isDemoOn = false;
+    Calendar alarmDate = Calendar.getInstance();
+    boolean defaultDate = false;
 
     @Override
     //this method is overriden to disable the back press
@@ -51,7 +56,9 @@ public class Welcome extends AppCompatActivity {
         isDemoOn = getFromSettings.getBooleanExtra("demo", false);
         numberOfInitialInput = getFromSettings.getIntExtra("NOIHRV", 15);
         switchBool = getFromSettings.getBooleanExtra("HRstuff", false);
-        ManualInputedHR.setValue(getFromSettings.getIntExtra("intOFHR",55));
+        ManualInputedHR.setValue(getFromSettings.getIntExtra("intOFHR", 55));
+        alarmDate.set(getFromSettings.getIntExtra("year", 0), getFromSettings.getIntExtra("month", 0), getFromSettings.getIntExtra("day", 0));
+
         super.onResume();
     }
 
@@ -69,10 +76,11 @@ public class Welcome extends AppCompatActivity {
 
             case R.id.action_settings:
                 Intent i = new Intent(this, Settings.class);
-                i.putExtra("intOfHR",ManualInputedHR.getValue());
-                i.putExtra("HRstuff",switchBool);
-                i.putExtra("demo",isDemoOn);
-                i.putExtra("int",numberOfInitialInput);
+                i.putExtra("intOfHR", ManualInputedHR.getValue());
+                i.putExtra("HRstuff", switchBool);
+                i.putExtra("demo", isDemoOn);
+                i.putExtra("int", numberOfInitialInput);
+                i.putExtra("date", alarmDate);
                 startActivity(i);
                 break;
             case R.id.action_info:
@@ -85,16 +93,39 @@ public class Welcome extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+/////////THE ON CREATE OF THE WELCOME APP
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
+
+
+        //Also Part Of The On Resume
+
+        Intent getFromDateSelector = getIntent();
+        Calendar today = Calendar.getInstance();
+
+
+        int Year = getFromDateSelector.getIntExtra("year", today.get(Calendar.YEAR));
+        int Month = getFromDateSelector.getIntExtra("month", today.get(Calendar.MONTH));
+        int Day = getFromDateSelector.getIntExtra("day", today.get(Calendar.DAY_OF_MONTH));
+        defaultDate = getFromDateSelector.getBooleanExtra("default", false);
+        alarmDate.set(Calendar.MONTH, Month);
+        alarmDate.set(Calendar.YEAR, Year);
+        alarmDate.set(Calendar.DAY_OF_MONTH, Day);
+
+        //Print The date Selected
+
+        dateToShow = (TextView) findViewById(R.id.dateShow);
+        dateToShow.setText(setDateValue(alarmDate));
+
+        //Block the Rotation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
         if (numberOfInitialInput == 0) {
             numberOfInitialInput = 15;
         }
-
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
 
 
         // The Manual HR
@@ -110,6 +141,7 @@ public class Welcome extends AppCompatActivity {
         initialHrSwitch.setChecked(switchBool);
 
         ManualInputedHR.setClickable(false);
+
         // What to do when the Switch is clicked
 
         initialHrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -138,11 +170,11 @@ public class Welcome extends AppCompatActivity {
         update_text = (TextView) findViewById(R.id.alarmText);
         alarm_Hour.setMaxValue(23);
         alarm_Hour.setMinValue(0);
-        alarm_Hour.setValue(Calendar.HOUR_OF_DAY);
+        alarm_Hour.setValue(today.get(Calendar.HOUR_OF_DAY));
         alarm_Hour.setWrapSelectorWheel(true);
         alarm_Min.setMinValue(0);
         alarm_Min.setMaxValue(59);
-        alarm_Min.setValue(Calendar.MINUTE);
+        alarm_Min.setValue(today.get(Calendar.MINUTE));
         alarm_Min.setWrapSelectorWheel(true);
 
         //this is a code found online that would not disable the bluetooth
@@ -156,7 +188,21 @@ public class Welcome extends AppCompatActivity {
         // Take The value From the calendar
 
         final Intent my_intent = new Intent(this.context, AlarmReceiver.class);
-        final Intent connectionIntent = new Intent(this.context, ConnectionReceiver.class);
+
+
+        // Set the Date
+
+        Button dateSelect = (Button) findViewById(R.id.DateBtn);
+        dateSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent goToDateActivity = new Intent(Welcome.this, DateSelect.class);
+                startActivity(goToDateActivity);
+
+
+            }
+        });
 
 
         // The Set alarm Click
@@ -180,11 +226,9 @@ public class Welcome extends AppCompatActivity {
 
 
                 // For debugging purposes Make this run asap
-
-
                 Calendar TimeNow;
-
                 TimeNow = Calendar.getInstance();
+
                 if (isDemoOn) {
                     // this is the one to delete
                     calendar.setTimeInMillis(TimeNow.getTimeInMillis() + 2000);
@@ -194,44 +238,89 @@ public class Welcome extends AppCompatActivity {
                     calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
                     calendar.set(Calendar.MINUTE, alarm_Min.getValue());
 
+
+                    calendar.set(Calendar.YEAR, alarmDate.get(Calendar.YEAR));
+                    calendar.set(Calendar.MONTH, alarmDate.get(Calendar.MONTH));
+                    calendar.set(Calendar.DAY_OF_MONTH, alarmDate.get(Calendar.DAY_OF_MONTH));
+
+
                 }
                 //my_intent.putExtras(transmit);
 
                 String pmOram;
-                if (TimeNow.getTimeInMillis() <= calendar.getTimeInMillis()) {
+                
+//NEED TO THINK ABOUT THIS LOGIC IN REVERSE
+
+                if (TimeNow.get(Calendar.YEAR) <= calendar.get(Calendar.YEAR)) {
+                    if (TimeNow.get(Calendar.MONTH) <= calendar.get(Calendar.MONTH)) {
+                        if (TimeNow.get(Calendar.DAY_OF_MONTH) <= calendar.get(Calendar.DAY_OF_MONTH)) {
+                            if (TimeNow.get(Calendar.HOUR_OF_DAY) <= calendar.get(Calendar.HOUR_OF_DAY)) {
+                                if (TimeNow.get(Calendar.MINUTE) < calendar.get(Calendar.MINUTE)) {
 
 
-                    int hour = alarm_Hour.getValue();
-                    int min = alarm_Min.getValue();
-                    String hour_s = String.valueOf(hour);
-                    String min_s = String.valueOf(min);
-                    pmOram = "am";
-                    if (min < 10) {
-                        min_s = "0" + String.valueOf(min);
+                                    int hour = alarm_Hour.getValue();
+                                    int min = alarm_Min.getValue();
+                                    String dateOfAlarm = setDateValue(alarmDate);
+                                    String hour_s = String.valueOf(hour);
+                                    String min_s = String.valueOf(min);
+                                    pmOram = "am";
+                                    if (min < 10) {
+                                        min_s = "0" + String.valueOf(min);
+                                    }
+                                    if (hour > 12) {
+                                        hour_s = String.valueOf(hour - 12);
+
+                                        pmOram = "pm";
+                                    }
+
+
+                                    set_alarm_text("Alarm On , Set to : " + hour_s + ":" + min_s + " " + pmOram + " " + dateOfAlarm);
+
+                                    //Pending Intent Stuff
+                                    pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
+                                            , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+                                    //set the alarm Manager
+                                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                            pendingIntent);
+
+                                } else {
+                                    Context context = getApplicationContext();
+                                    CharSequence text = "min";
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(context, text, duration);
+                                    toast.show();
+                                }
+                            } else {
+                                Context context = getApplicationContext();
+                                CharSequence text = "Hour";
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(context, text, duration);
+                                toast.show();
+                            }
+                        } else {
+                            Context context = getApplicationContext();
+                            CharSequence text = "day";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+
+                    } else {
+                        Context context = getApplicationContext();
+                        CharSequence text = "month";
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     }
-                    if (hour > 12) {
-                        hour_s = String.valueOf(hour - 12);
 
-                        pmOram = "pm";
-                    }
-
-
-                    set_alarm_text("Alarm On , Set to:" + hour_s + ":" + min_s + " " + pmOram);
-
-                    //Pending Intent Stuff
-                    pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
-                            , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    // pendingConnectionIntent= PendingIntent.getBroadcast(Welcome.this,0,connectionIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-                    //set the alarm Manager
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                            pendingIntent);
-                    // alarmManager.set(AlarmManager.RTC_WAKEUP,connectionTime.getTimeInMillis(),pendingConnectionIntent);
 
                 } else {
+                    System.out.println("time " + TimeNow.get(Calendar.YEAR) + " calendar " + calendar.get(Calendar.YEAR));
                     Context context = getApplicationContext();
-                    CharSequence text = "Chose a Time In the Future!";
+                    CharSequence text = "Year";
+                    //CharSequence text = "Chose a Time In the Future!";
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
@@ -257,6 +346,13 @@ public class Welcome extends AppCompatActivity {
 
     }
 
+    private String setDateValue(Calendar a) {
+        String year = "" + a.get(Calendar.YEAR);
+        String month = "" + (a.get(Calendar.MONTH) + 1);
+        String day = "" + a.get(Calendar.DAY_OF_MONTH);
+        String Result = "" + day + "/" + month + "/" + year;
+        return "Date : " + Result;
+    }
 
     private void set_alarm_text(String output) {
 

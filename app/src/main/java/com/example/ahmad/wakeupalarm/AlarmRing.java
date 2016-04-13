@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -60,17 +61,20 @@ public class AlarmRing extends AppCompatActivity {
     @Override
     //this is the oncreate of the alarm ring activity
     protected void onCreate(Bundle savedInstanceState) {
+        //Block the Rotation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_ring);
 
-        if(NumberOfinitialFilling==0){
+        if (NumberOfinitialFilling == 0) {
             NumberOfinitialFilling = 15;
         }
 
         //First See if there is a fixed initial Heart Rate
 
         ToGetInitialHR = getIntent();
-        NumberOfinitialFilling = ToGetInitialHR.getIntExtra("int",15);
+        NumberOfinitialFilling = ToGetInitialHR.getIntExtra("int", 15);
         ValueComingFromWelcome = ToGetInitialHR.getIntExtra("initialValue", 0);
         doesInitialHrExists = ToGetInitialHR.getBooleanExtra("BoolSwitch", false);
 
@@ -134,11 +138,11 @@ public class AlarmRing extends AppCompatActivity {
             toast.show();
             statusBT_1.setText("Not Connected");
             isconnected = false;
-            TextView a =(TextView)findViewById(R.id.HRValueStats);
+            TextView a = (TextView) findViewById(R.id.HRValueStats);
             a.setText("");
-            a =(TextView)findViewById(R.id.HRinitial);
+            a = (TextView) findViewById(R.id.HRinitial);
             a.setText("");
-            a=(TextView)findViewById(R.id.HRafterRing);
+            a = (TextView) findViewById(R.id.HRafterRing);
             a.setText("");
         }
 
@@ -250,14 +254,14 @@ public class AlarmRing extends AppCompatActivity {
 
                             if (!doesInitialHrExists) {
 
-                                fillupTheArrays(initialHR, afterRing, a, counter++,NumberOfinitialFilling);
-                                if(NumberOfinitialFilling-counter>0) {
+                                fillupTheArrays(initialHR, afterRing, a, counter++, NumberOfinitialFilling);
+                                if (NumberOfinitialFilling - counter > 0) {
                                     iniAvegrage.setText("" + initialHR.getAverage() + "," + (NumberOfinitialFilling - counter) + " left");
-                                }else{
+                                } else {
                                     iniAvegrage.setText("" + initialHR.getAverage());
                                 }
                                 newAverage.setText("" + afterRing.getAverage());
-                                if (isHRbigger(initialHR.getAverage(), afterRing.getAverage()) && isconnected == true) {
+                                if (isHRbigger(initialHR.getAverage(), afterRing.getAverage(),1.05) && isconnected == true) {
 
                                     TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
                                     HRVALUESTATUS.setText("YOU ARE GOOD");
@@ -269,7 +273,7 @@ public class AlarmRing extends AppCompatActivity {
                                     iniAvegrage.setText("" + ValueComingFromWelcome);
                                     afterRing.addValue(a);
                                     newAverage.setText("" + afterRing.getAverage());
-                                    if (isHRbigger(ValueComingFromWelcome, afterRing.getAverage())) {
+                                    if (isHRbigger(ValueComingFromWelcome, afterRing.getAverage(),1.05)) {
                                         TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
                                         HRVALUESTATUS.setText("YOU ARE GOOD");
                                         CloseUp();
@@ -332,7 +336,7 @@ public class AlarmRing extends AppCompatActivity {
 
     }
 
-    public void fillupTheArrays(HRarray i, HRarray n, int a, int count,int numbIn) {
+    public void fillupTheArrays(HRarray i, HRarray n, int a, int count, int numbIn) {
         if (a < 0) {
             a = -a;
         }
@@ -344,10 +348,9 @@ public class AlarmRing extends AppCompatActivity {
     }
 
     // Function to compare two values
-    public boolean isHRbigger(int initial, int NewHR) {
-        if (initial > 40) {
-            return (initial * 1.05 <= NewHR);
-        }
-        return false;
+    public boolean isHRbigger(int initial, int NewHR,double PercentBigger) {
+
+        return (initial * PercentBigger <= NewHR);
+
     }
 }

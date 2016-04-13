@@ -41,15 +41,17 @@
             android:name=".RingtonePlayingService"
             android:enabled="true" />
 
-
         <activity
             android:name=".info"
-            android:parentActivityName=".Welcome"
-            android:label="About This App">
+            android:label="About This App"
+            android:parentActivityName=".Welcome" >
         </activity>
-        <activity android:name=".Settings"
-            android:parentActivityName=".Welcome"
-            android:label="Settings">
+        <activity
+            android:name=".Settings"
+            android:label="Settings"
+            android:parentActivityName=".Welcome" >
+        </activity>
+        <activity android:name=".DateSelect" >
         </activity>
     </application>
 

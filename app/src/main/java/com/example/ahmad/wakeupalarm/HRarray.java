@@ -63,8 +63,8 @@ public class HRarray {
         return array;
     }
 
-    public boolean isHRbigger(HRarray initial, HRarray NewHR) {
-        return (initial.getAverage() <= NewHR.getAverage() * 1.15);
+    public boolean isHRbigger(HRarray initial, HRarray NewHR,double percent) {
+        return (initial.getAverage() <= NewHR.getAverage() * percent);
     }
 
 }

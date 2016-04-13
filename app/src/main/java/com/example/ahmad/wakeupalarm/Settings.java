@@ -1,6 +1,7 @@
 package com.example.ahmad.wakeupalarm;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 
-public class Settings extends AppCompatActivity {
+public class  Settings extends AppCompatActivity {
     int numberOfInitialHRinput;
     boolean isDemoOn = false;
 
@@ -23,6 +24,9 @@ public class Settings extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Block the Rotation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         //Getting From Old Welcome
