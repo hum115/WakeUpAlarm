@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/datePicker"
         android:layout_alignParentTop="true"
-        android:calendarTextColor="#ffffff"/>
+        android:calendarTextColor="#ffffff"
+
+        android:backgroundTint="#8c8888" />
 
     <Button
         style="?android:attr/buttonStyleSmall"

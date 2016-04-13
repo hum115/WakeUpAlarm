@@ -12,21 +12,11 @@
     <RelativeLayout
         android:background="@drawable/test"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         android:id="@+id/relativeLayout"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="24dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="# of Initial Hear Rate Update"
-            android:textColor="#ffffff"
-            android:id="@+id/textView2"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="27dp" />
 
         <NumberPicker
             android:layout_width="wrap_content"
@@ -34,8 +24,8 @@
             android:id="@+id/ValueOfInputs"
             android:clickable="false"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/textView2"
-            android:layout_marginStart="31dp" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="34dp" />
 
         <Switch
             android:layout_width="wrap_content"
@@ -43,9 +33,29 @@
             android:text="Demo 2 sec Alarm"
             android:id="@+id/demoSwitch"
             android:textColor="#ffffff"
-            android:layout_below="@+id/textView2"
-            android:layout_alignStart="@+id/textView2"
-            android:layout_marginTop="22dp" />
+            android:layout_below="@+id/updateDynamic"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="46dp" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Initial Heart Rate"
+            android:textColor="#ffffff"
+            android:id="@+id/updateFix"
+            android:layout_alignTop="@+id/ValueOfInputs"
+            android:layout_alignStart="@+id/demoSwitch"
+            android:checked="false" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number ofInitial Update"
+            android:textColor="#ffffff"
+            android:id="@+id/updateDynamic"
+            android:layout_below="@+id/updateFix"
+            android:layout_alignStart="@+id/updateFix"
+            android:checked="false" />
     </RelativeLayout>
 
     <RelativeLayout

@@ -10,9 +10,13 @@ import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 
-public class  Settings extends AppCompatActivity {
+public class Settings extends AppCompatActivity {
     int numberOfInitialHRinput;
+    int initalHRValue;
+    Switch dynamic;
+    Switch statics;
     boolean isDemoOn = false;
+    boolean boolSwitch = true;
 
     @Override
     public void onResume() {
@@ -29,12 +33,21 @@ public class  Settings extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        //Setting up the Switchs
+
+        dynamic = (Switch) findViewById(R.id.updateDynamic);
+        statics = (Switch) findViewById(R.id.updateFix);
+
         //Getting From Old Welcome
         final Intent getFromSettings = getIntent();
         isDemoOn = getFromSettings.getBooleanExtra("demo", false);
-        numberOfInitialHRinput = getFromSettings.getIntExtra("int", 15);
 
-        NumberPicker numberPicker = (NumberPicker) findViewById(R.id.ValueOfInputs);
+        numberOfInitialHRinput = getFromSettings.getIntExtra("int", 15);
+        boolSwitch = getFromSettings.getBooleanExtra("boolswitch", false);
+
+        CheckStatus(boolSwitch);
+
+        final NumberPicker numberPicker = (NumberPicker) findViewById(R.id.ValueOfInputs);
         numberPicker.setMaxValue(40);
         numberPicker.setMinValue(15);
         numberPicker.setWrapSelectorWheel(true);
@@ -55,6 +68,20 @@ public class  Settings extends AppCompatActivity {
                 }
             }
         });
+        dynamic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    statics.setChecked(false);
+                    numberPicker.setMaxValue(40);
+                    numberPicker.setMinValue(15);
+
+                } else {
+                    statics.setChecked(true);
+                    numberPicker.setMaxValue(120);
+                    numberPicker.setMinValue(55);
+                }
+            }
+        });
 
 
         Button save = (Button) findViewById(R.id.SaveBtn);
@@ -62,17 +89,34 @@ public class  Settings extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 NumberPicker numberPicker = (NumberPicker) findViewById(R.id.ValueOfInputs);
-                numberOfInitialHRinput = numberPicker.getValue();
-
                 Intent sentBack = new Intent(Settings.this, Welcome.class);
                 sentBack.putExtra("demo", isDemoOn);
-                sentBack.putExtra("NOIHRV", numberOfInitialHRinput);
-                sentBack.putExtra("intOFHR", getFromSettings.getIntExtra("intOFHR", 55));
-                sentBack.putExtra("HRstuff",getFromSettings.getBooleanExtra("HRstuff",false));
+                sentBack.putExtra("boolswith", boolSwitch);
+
+                if (boolSwitch) {
+                    initalHRValue = numberPicker.getValue();
+                    sentBack.putExtra("intOFHR", initalHRValue);
+
+                } else {
+                    numberOfInitialHRinput = numberPicker.getValue();
+                    sentBack.putExtra("NOIHRV", numberOfInitialHRinput);
+                }
+
                 startActivity(sentBack);
 
             }
         });
+    }
+
+    public void CheckStatus(boolean status) {
+        if (status) {
+            dynamic.setChecked(false);
+            statics.setChecked(true);
+        } else {
+            dynamic.setChecked(true);
+            statics.setChecked(false);
+        }
+
     }
 
 }

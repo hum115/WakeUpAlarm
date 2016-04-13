@@ -1,6 +1,5 @@
 package com.example.ahmad.wakeupalarm;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -8,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -43,6 +41,7 @@ public class Welcome extends AppCompatActivity {
     boolean isDemoOn = false;
     Calendar alarmDate = Calendar.getInstance();
     boolean defaultDate = false;
+    Calendar TimeNow = Calendar.getInstance();
 
     @Override
     //this method is overriden to disable the back press
@@ -81,6 +80,7 @@ public class Welcome extends AppCompatActivity {
                 i.putExtra("demo", isDemoOn);
                 i.putExtra("int", numberOfInitialInput);
                 i.putExtra("date", alarmDate);
+                i.putExtra("boolswitch",switchBool);
                 startActivity(i);
                 break;
             case R.id.action_info:
@@ -105,20 +105,21 @@ public class Welcome extends AppCompatActivity {
 
         Intent getFromDateSelector = getIntent();
         Calendar today = Calendar.getInstance();
+        int Year = getFromDateSelector.getIntExtra("year", 2016);
+        int Month = getFromDateSelector.getIntExtra("month", 4);
+        int Day = getFromDateSelector.getIntExtra("day", 13);
 
-
-        int Year = getFromDateSelector.getIntExtra("year", today.get(Calendar.YEAR));
-        int Month = getFromDateSelector.getIntExtra("month", today.get(Calendar.MONTH));
-        int Day = getFromDateSelector.getIntExtra("day", today.get(Calendar.DAY_OF_MONTH));
         defaultDate = getFromDateSelector.getBooleanExtra("default", false);
+
         alarmDate.set(Calendar.MONTH, Month);
         alarmDate.set(Calendar.YEAR, Year);
         alarmDate.set(Calendar.DAY_OF_MONTH, Day);
-
+        System.out.println(alarmDate.get(Calendar.YEAR));
         //Print The date Selected
 
         dateToShow = (TextView) findViewById(R.id.dateShow);
         dateToShow.setText(setDateValue(alarmDate));
+        System.out.println(alarmDate.get(Calendar.YEAR));
 
         //Block the Rotation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
@@ -128,17 +129,10 @@ public class Welcome extends AppCompatActivity {
         }
 
 
-        // The Manual HR
-        ManualInputedHR = (NumberPicker) findViewById(R.id.ManualHR);
-        ManualInputedHR.setMinValue(55);
-        ManualInputedHR.setMaxValue(120);
-        ManualInputedHR.setWrapSelectorWheel(true);
 
 
-        // Setting Up the Switch
 
-        initialHrSwitch = (Switch) findViewById(R.id.initialHeartRateSwitch);
-        initialHrSwitch.setChecked(switchBool);
+
 
         ManualInputedHR.setClickable(false);
 
@@ -207,11 +201,14 @@ public class Welcome extends AppCompatActivity {
 
         // The Set alarm Click
 
+
         Button start_alarm = (Button) findViewById(R.id.start_alarm);
+
         start_alarm.setOnClickListener(new View.OnClickListener() {
-            @TargetApi(Build.VERSION_CODES.M)
+
             @Override
             public void onClick(View v) {
+
 
                 //checking the switch
 
@@ -232,35 +229,113 @@ public class Welcome extends AppCompatActivity {
                 if (isDemoOn) {
                     // this is the one to delete
                     calendar.setTimeInMillis(TimeNow.getTimeInMillis() + 2000);
+
                     //launch the connection 20 seconde before
                 } else {
+
                     //Regular Settings
                     calendar.set(Calendar.HOUR_OF_DAY, alarm_Hour.getValue());
                     calendar.set(Calendar.MINUTE, alarm_Min.getValue());
 
+                    if (defaultDate) {
 
-                    calendar.set(Calendar.YEAR, alarmDate.get(Calendar.YEAR));
-                    calendar.set(Calendar.MONTH, alarmDate.get(Calendar.MONTH));
-                    calendar.set(Calendar.DAY_OF_MONTH, alarmDate.get(Calendar.DAY_OF_MONTH));
+                        calendar.set(Calendar.YEAR, alarmDate.get(Calendar.YEAR));
+                        calendar.set(Calendar.MONTH, alarmDate.get(Calendar.MONTH));
+                        calendar.set(Calendar.DAY_OF_MONTH, alarmDate.get(Calendar.DAY_OF_MONTH));
+
+                    } else {
+                        calendar.set(Calendar.YEAR, 2016);
+                        calendar.set(Calendar.MONTH, 04);
+                        calendar.set(Calendar.DAY_OF_MONTH, 13);
+
+                    }
 
 
                 }
                 //my_intent.putExtras(transmit);
 
                 String pmOram;
-                
-//NEED TO THINK ABOUT THIS LOGIC IN REVERSE
-
                 if (TimeNow.get(Calendar.YEAR) <= calendar.get(Calendar.YEAR)) {
-                    if (TimeNow.get(Calendar.MONTH) <= calendar.get(Calendar.MONTH)) {
-                        if (TimeNow.get(Calendar.DAY_OF_MONTH) <= calendar.get(Calendar.DAY_OF_MONTH)) {
-                            if (TimeNow.get(Calendar.HOUR_OF_DAY) <= calendar.get(Calendar.HOUR_OF_DAY)) {
-                                if (TimeNow.get(Calendar.MINUTE) < calendar.get(Calendar.MINUTE)) {
+                    if (TimeNow.get(Calendar.YEAR) < calendar.get(Calendar.YEAR)) {
+                        System.out.println("Year is bigger");
+                        int hour = alarm_Hour.getValue();
+                        int min = alarm_Min.getValue();
+                        String dateOfAlarm = setDateValue(calendar);
+                        String hour_s = String.valueOf(hour);
+                        String min_s = String.valueOf(min);
+                        pmOram = "am";
+                        if (min < 10) {
+                            min_s = "0" + String.valueOf(min);
+                        }
+                        if (hour > 12) {
+                            hour_s = String.valueOf(hour - 12);
 
+                            pmOram = "pm";
+                        }
+                        set_alarm_text("Alarm On , Set to : " + hour_s + ":" + min_s + " " + pmOram + " " + dateOfAlarm);
+                        //Pending Intent Stuff
+                        pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
+                                , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        //set the alarm Manager
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                pendingIntent);
 
+                    } else if (TimeNow.get(Calendar.MONTH) <= calendar.get(Calendar.MONTH)) {
+                        if ((TimeNow.get(Calendar.MONTH) + 1) < calendar.get(Calendar.MONTH)) {
+                            int hour = alarm_Hour.getValue();
+                            int min = alarm_Min.getValue();
+                            String dateOfAlarm = setDateValue(calendar);
+                            String hour_s = String.valueOf(hour);
+                            String min_s = String.valueOf(min);
+                            pmOram = "am";
+                            if (min < 10) {
+                                min_s = "0" + String.valueOf(min);
+                            }
+                            if (hour > 12) {
+                                hour_s = String.valueOf(hour - 12);
+
+                                pmOram = "pm";
+                            }
+                            set_alarm_text("Alarm On , Set to : " + hour_s + ":" + min_s + " " + pmOram + " " + dateOfAlarm);
+                            //Pending Intent Stuff
+                            pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
+                                    , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            //set the alarm Manager
+                            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                    pendingIntent);
+
+                        } else if (TimeNow.get(Calendar.DAY_OF_MONTH) <= calendar.get(Calendar.DAY_OF_MONTH)) {
+                            if (TimeNow.get(Calendar.DAY_OF_MONTH) < calendar.get(Calendar.DAY_OF_MONTH)) {
+                                System.out.println("Day is bigger");
+
+                                int hour = alarm_Hour.getValue();
+                                int min = alarm_Min.getValue();
+                                String dateOfAlarm = setDateValue(calendar);
+                                String hour_s = String.valueOf(hour);
+                                String min_s = String.valueOf(min);
+                                pmOram = "am";
+                                if (min < 10) {
+                                    min_s = "0" + String.valueOf(min);
+                                }
+                                if (hour > 12) {
+                                    hour_s = String.valueOf(hour - 12);
+
+                                    pmOram = "pm";
+                                }
+                                set_alarm_text("Alarm On , Set to : " + hour_s + ":" + min_s + " " + pmOram + " " + dateOfAlarm);
+                                //Pending Intent Stuff
+                                pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
+                                        , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                //set the alarm Manager
+                                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                        pendingIntent);
+
+                            } else if (TimeNow.get(Calendar.HOUR_OF_DAY) <= calendar.get(Calendar.HOUR_OF_DAY)) {
+                                if (TimeNow.get(Calendar.HOUR_OF_DAY) < calendar.get(Calendar.HOUR_OF_DAY)) {
+                                    System.out.println("Hour is bigger");
                                     int hour = alarm_Hour.getValue();
                                     int min = alarm_Min.getValue();
-                                    String dateOfAlarm = setDateValue(alarmDate);
+                                    String dateOfAlarm = setDateValue(calendar);
                                     String hour_s = String.valueOf(hour);
                                     String min_s = String.valueOf(min);
                                     pmOram = "am";
@@ -272,8 +347,6 @@ public class Welcome extends AppCompatActivity {
 
                                         pmOram = "pm";
                                     }
-
-
                                     set_alarm_text("Alarm On , Set to : " + hour_s + ":" + min_s + " " + pmOram + " " + dateOfAlarm);
 
                                     //Pending Intent Stuff
@@ -285,23 +358,52 @@ public class Welcome extends AppCompatActivity {
                                     alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                                             pendingIntent);
 
+
+                                } else if (TimeNow.get(Calendar.MINUTE) < calendar.get(Calendar.MINUTE)) {
+                                    System.out.println("Min is bigger");
+                                    int hour = alarm_Hour.getValue();
+                                    int min = alarm_Min.getValue();
+                                    String dateOfAlarm = setDateValue(calendar);
+                                    String hour_s = String.valueOf(hour);
+                                    String min_s = String.valueOf(min);
+                                    pmOram = "am";
+                                    if (min < 10) {
+                                        min_s = "0" + String.valueOf(min);
+                                    }
+                                    if (hour > 12) {
+                                        hour_s = String.valueOf(hour - 12);
+
+                                        pmOram = "pm";
+                                    }
+                                    set_alarm_text("Alarm On , Set to : " + hour_s + ":" + min_s + " " + pmOram + " " + dateOfAlarm);
+
+                                    //Pending Intent Stuff
+                                    pendingIntent = PendingIntent.getBroadcast(Welcome.this, 0
+                                            , my_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+                                    //set the alarm Manager
+                                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                            pendingIntent);
+
+
                                 } else {
                                     Context context = getApplicationContext();
-                                    CharSequence text = "min";
+                                    CharSequence text = "Chose a Time In the Future!-min";
                                     int duration = Toast.LENGTH_SHORT;
                                     Toast toast = Toast.makeText(context, text, duration);
                                     toast.show();
                                 }
                             } else {
                                 Context context = getApplicationContext();
-                                CharSequence text = "Hour";
+                                CharSequence text = "hose a Time In the Future!- Hour";
                                 int duration = Toast.LENGTH_SHORT;
                                 Toast toast = Toast.makeText(context, text, duration);
                                 toast.show();
                             }
                         } else {
                             Context context = getApplicationContext();
-                            CharSequence text = "day";
+                            CharSequence text = "Chose a Time In the Future!-day";
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
@@ -309,7 +411,7 @@ public class Welcome extends AppCompatActivity {
 
                     } else {
                         Context context = getApplicationContext();
-                        CharSequence text = "month";
+                        CharSequence text = "Chose a Time In the Future!-month";
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -319,8 +421,7 @@ public class Welcome extends AppCompatActivity {
                 } else {
                     System.out.println("time " + TimeNow.get(Calendar.YEAR) + " calendar " + calendar.get(Calendar.YEAR));
                     Context context = getApplicationContext();
-                    CharSequence text = "Year";
-                    //CharSequence text = "Chose a Time In the Future!";
+                    CharSequence text = "Chose a Time In the Future!-Year";
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
@@ -348,7 +449,7 @@ public class Welcome extends AppCompatActivity {
 
     private String setDateValue(Calendar a) {
         String year = "" + a.get(Calendar.YEAR);
-        String month = "" + (a.get(Calendar.MONTH) + 1);
+        String month = "" + (a.get(Calendar.MONTH));
         String day = "" + a.get(Calendar.DAY_OF_MONTH);
         String Result = "" + day + "/" + month + "/" + year;
         return "Date : " + Result;
