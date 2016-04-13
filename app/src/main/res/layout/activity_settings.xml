@@ -50,7 +50,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number ofInitial Update"
+            android:text="Number of Initial Update"
             android:textColor="#ffffff"
             android:id="@+id/updateDynamic"
             android:layout_below="@+id/updateFix"

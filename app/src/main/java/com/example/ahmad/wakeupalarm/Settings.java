@@ -82,6 +82,20 @@ public class Settings extends AppCompatActivity {
                 }
             }
         });
+        statics.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    dynamic.setChecked(false);
+                    numberPicker.setMaxValue(120);
+                    numberPicker.setMinValue(55);
+
+                } else {
+                    dynamic.setChecked(true);
+                    numberPicker.setMaxValue(40);
+                    numberPicker.setMinValue(15);
+                }
+            }
+        });
 
 
         Button save = (Button) findViewById(R.id.SaveBtn);

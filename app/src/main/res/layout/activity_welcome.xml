@@ -115,7 +115,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/AlarmLayout"
-        android:background="@drawable/test">
+      >
 
         <TextView
             android:id="@+id/alarmText"

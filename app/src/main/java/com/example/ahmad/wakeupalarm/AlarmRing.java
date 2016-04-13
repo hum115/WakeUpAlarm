@@ -241,6 +241,7 @@ public class AlarmRing extends AppCompatActivity {
                     if (isconnected == true) {
 
                         if (checkConnection(statusBT_1, isconnected)) {
+                            checkConnection(statusBT_1, isconnected);
                             String HeartRatetext = msg.getData().getString("HeartRate");
 
                             //This is the Message Containing the Value of HR in int
@@ -253,6 +254,7 @@ public class AlarmRing extends AppCompatActivity {
                             //first step is if there is no initial Heart rate
 
                             if (!doesInitialHrExists) {
+                                checkConnection(statusBT_1, isconnected);
 
                                 fillupTheArrays(initialHR, afterRing, a, counter++, NumberOfinitialFilling);
                                 if (NumberOfinitialFilling - counter > 0) {
@@ -261,7 +263,7 @@ public class AlarmRing extends AppCompatActivity {
                                     iniAvegrage.setText("" + initialHR.getAverage());
                                 }
                                 newAverage.setText("" + afterRing.getAverage());
-                                if (isHRbigger(initialHR.getAverage(), afterRing.getAverage(),1.05) && isconnected == true) {
+                                if (isHRbigger(initialHR.getAverage(), afterRing.getAverage(), 1.05) && isconnected == true) {
 
                                     TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
                                     HRVALUESTATUS.setText("YOU ARE GOOD");
@@ -270,10 +272,11 @@ public class AlarmRing extends AppCompatActivity {
                             } else //the logic to do if there is any initial value for a heart rate
                             {
                                 if (ValueComingFromWelcome != 0) {
+                                    checkConnection(statusBT_1, isconnected);
                                     iniAvegrage.setText("" + ValueComingFromWelcome);
                                     afterRing.addValue(a);
                                     newAverage.setText("" + afterRing.getAverage());
-                                    if (isHRbigger(ValueComingFromWelcome, afterRing.getAverage(),1.05)) {
+                                    if (isHRbigger(ValueComingFromWelcome, afterRing.getAverage(), 1.05)) {
                                         TextView HRVALUESTATUS = (TextView) findViewById(R.id.HRValueStats);
                                         HRVALUESTATUS.setText("YOU ARE GOOD");
                                         CloseUp();
@@ -309,18 +312,18 @@ public class AlarmRing extends AppCompatActivity {
     };
 
     public boolean checkConnection(TextView B, Boolean C) {
-        if (_bt.IsConnected()) {
+        if (!_bt.IsConnected()){
 
-            return true;
+            B.setText("Lost Connection");
+            isconnected = false;
+            CharSequence text = "Connection Lost ... ";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(AlarmRing.this, text, duration);
+            toast.show();
+            return false;
         }
-        B.setText("Lost Connection");
-        C = false;
-        CharSequence text = "Connection Lost ... ";
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(AlarmRing.this, text, duration);
-        toast.show();
-        return false;
 
+        return true;
     }
 
     public void CloseUp() {
@@ -348,7 +351,7 @@ public class AlarmRing extends AppCompatActivity {
     }
 
     // Function to compare two values
-    public boolean isHRbigger(int initial, int NewHR,double PercentBigger) {
+    public boolean isHRbigger(int initial, int NewHR, double PercentBigger) {
 
         return (initial * PercentBigger <= NewHR);
 
